@@ -1,15 +1,26 @@
-import express from 'express';
 import cors from 'cors';
 import { config } from 'dotenv';
+import express from 'express';
+
 import { corsOptions } from './config/corsOptions';
+import logger from './logging/logger';
 import authRoute from './routes/auth.routes';
 
-config();
-
+// Debugging: Check if the .env file is being loaded
+const result = config();
+if (result.error) {
+  logger.error('Error loading .env file:', result.error);
+} else {
+  logger.info('Loaded .env file successfully');
+}
 const app = express();
-const port = 3000;
+const port = process.env.SERVER_PORT || 3000;
 
-app.set("trust proxy", 1);
+if (!process.env.SERVER_PORT) {
+  logger.error('Port is not defined, falling back to 3000');
+}
+
+app.set('trust proxy', 1);
 app.use(cors(corsOptions));
 
 app.use(express.urlencoded({ extended: true }));
@@ -21,7 +32,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+  logger.info(`Server is running at port ${port}`);
 });
 
 app.use('/auth', authRoute);
