@@ -13,14 +13,12 @@ export class GoogleAPIService {
         },
       );
 
-      // Check if the response data matches the UserInfo type
       const userData: GoogleUserInfo = response.data;
 
       return userData;
     } catch (error) {
-      // Log the error if the response data doesn't match the UserInfo type
       logger.error('Error: Response data does not match UserInfo type', error);
-      throw error; // You can choose to re-throw the error or handle it accordingly
+      throw error;
     }
   }
 }
