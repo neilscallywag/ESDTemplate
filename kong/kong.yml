@@ -20,7 +20,7 @@ services:
           redis_host: "redis_host"       
           redis_port: 6379               
           redis_timeout: 2000         
-          
+
   - name: service-two
     url: service-two-host
     routes:
@@ -28,7 +28,7 @@ services:
         paths:
           - /service-two
     plugins:
-      - name: authn-jwt
+      - name: authn-kong
         config:
           jwt_secret: "your_jwt_secret"  
           redis_host: "redis_host"       
