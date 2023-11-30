@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "~constants/*": ["./src/constants/*"],
+      "~app/*": ["./src/app/*"],
+      "~components/*": ["./src/components/*"],
+      "~features/*": ["./src/features/*"],
+      "~auth/*": ["./src/features/auth/*"],
+      "~api": ["./src/features/api/api"],
+      "~experimental/*": ["./src/experimental/*"]
+    }
+  }
+}
