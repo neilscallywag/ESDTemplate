@@ -1,6 +1,6 @@
 import { User } from './entity/User';
 import logger from './logging/logger';
-import { DatabaseService } from './services/typeorm.service.';
+import { DatabaseService } from './services/typeorm.service';
 
 DatabaseService.initialize()
   .then(async () => {
