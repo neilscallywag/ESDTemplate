@@ -1,7 +1,8 @@
 import { randomBytes } from 'crypto';
 import { config } from 'dotenv';
 import { CookieOptions } from 'express';
-import jwt, { Secret } from 'jsonwebtoken';
+import { Secret } from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 
 import logger from '../logging/logger';
 

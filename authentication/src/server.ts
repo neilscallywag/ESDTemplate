@@ -1,6 +1,6 @@
-import cors from 'cors';
+import * as cors from 'cors';
 import { config } from 'dotenv';
-import express from 'express';
+import * as express from 'express';
 
 import { corsOptions } from './config/corsOptions';
 import logger from './logging/logger';

@@ -8,7 +8,7 @@ class RedisService {
   constructor() {
     this.client = createClient({ url: process.env.REDIS_URL });
     this.client.connect().catch((error: Error) => {
-      logger.error(error);
+      logger.error(' Redis connection has failed at ' + error);
     });
   }
 
