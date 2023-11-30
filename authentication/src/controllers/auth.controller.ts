@@ -1,18 +1,13 @@
 import { Request, Response } from 'express';
-import { OAuth2Client } from 'google-auth-library';
 
 import logger from '../logging/logger';
-import JWTHandler from '../middlewares/jwtMiddleware';
-import { GoogleAPIService } from '../services/googleapi.service';
-import { GoogleUserInfo } from '../types';
+import AuthService from '../services/auth.service';
 
-class AuthService {
-  private jwtHandler: JWTHandler;
-  private googleAPIService: GoogleAPIService;
+class AuthController {
+  private authService: AuthService;
 
   constructor() {
-    this.jwtHandler = new JWTHandler();
-    this.googleAPIService = new GoogleAPIService();
+    this.authService = new AuthService();
   }
 
   async handleGoogleCallback(req: Request, res: Response) {
@@ -26,45 +21,22 @@ class AuthService {
     }
 
     try {
-      const oAuth2Client = new OAuth2Client(
-        process.env.GOOGLE_CLIENT_ID,
-        process.env.GOOGLE_CLIENT_SECRET,
-        'postmessage',
-      );
+      const { accessToken, accessCookieOptions, userData } =
+        await this.authService.handleGoogleLogin(code);
 
-      const { tokens } = await oAuth2Client.getToken(code);
-      oAuth2Client.setCredentials(tokens);
-      const userAuth = oAuth2Client.credentials;
-
-      if (userAuth.access_token) {
-        try {
-          const userData: GoogleUserInfo =
-            await this.googleAPIService.getUserData(userAuth.access_token);
-          // TODO: Implement user retrieval and/or creation in the database
-          const { accessToken, accessCookieOptions } =
-            this.jwtHandler.createAccessToken('userid', 'role');
-          // TODO: Implement user session storage in Redis or another store
-          const cookieName = process.env.COOKIE_NAME || 'access_token';
-          if (!process.env.COOKIE_NAME) {
-            logger.warn(
-              'Cookie name is not defined in env, falling back to access_token',
-            );
-          }
-          res.cookie(cookieName, accessToken, accessCookieOptions);
-          res.status(200).json({ success: true, userData });
-        } catch (error) {
-          logger.error('Error was thrown ' + error);
-          return res.status(401).json({ error: 'OAuth callback failed' });
-        }
-      } else {
-        logger.error('Google Oauth2 Access token is undefined.');
-        return res.status(401).json({ error: 'OAuth callback failed' });
+      const cookieName = process.env.COOKIE_NAME || 'access_token';
+      if (!process.env.COOKIE_NAME) {
+        logger.warn(
+          'Cookie name is not defined in env, falling back to access_token',
+        );
       }
+      res.cookie(cookieName, accessToken, accessCookieOptions);
+      res.status(200).json({ success: true, userData });
     } catch (error) {
-      logger.error(error);
-      res.status(401).json({ error: 'OAuth callback failed' });
+      logger.error('Error was thrown ' + error);
+      return res.status(401).json({ error: 'OAuth callback failed' });
     }
   }
 }
 
-export const authController = new AuthService();
+export const authController = new AuthController();

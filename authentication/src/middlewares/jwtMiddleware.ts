@@ -1,11 +1,11 @@
 import { randomBytes } from 'crypto';
-import { config } from 'dotenv'; // Import dotenv config function
+import { config } from 'dotenv';
 import { CookieOptions } from 'express';
 import jwt, { Secret } from 'jsonwebtoken';
 
 import logger from '../logging/logger';
 
-config(); // Load environment variables from .env
+config();
 
 class JWTHandler {
   private secretKey: Secret;
@@ -24,6 +24,9 @@ class JWTHandler {
     }
     this.secretKey = secret;
     this.accessExp = '1d';
+
+    // this should really be in its own config file
+    // TODO: make this configurable
     this.cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -33,10 +36,14 @@ class JWTHandler {
   }
 
   public createAccessToken(userId: string, role: string) {
-    const accessToken = jwt.sign({ userId, role }, this.secretKey, {
-      expiresIn: this.accessExp,
-    });
-    return { accessToken, accessCookieOptions: this.cookieOptions };
+    try {
+      const accessToken = jwt.sign({ userId, role }, this.secretKey, {
+        expiresIn: this.accessExp,
+      });
+      return { accessToken, accessCookieOptions: this.cookieOptions };
+    } catch (error) {
+      throw new Error(String(error));
+    }
   }
 }
 
