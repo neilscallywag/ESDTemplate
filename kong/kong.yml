@@ -1,170 +1,36 @@
-_format_version: "1.1"
-
-
+_format_version: "2.1"
 services:
-- name: create-account
-  host: accountcomplexms
-  protocol: http
-  port: 5000
-  path: "/createaccount"
-  routes:
-  - name: create-account
-    paths:
-      - /api/v1/createaccount
-    protocols:
-      - http
-      - https
-- name: verify-login
-  host: accountcomplexms
-  protocol: http
-  port: 5000
-  path: "/verifylogin"
-  routes:
-  - name: verify-login
-    paths:
-      - /api/v1/verifylogin
-    protocols:
-      - http
-      - https
-- name: add-payment-details
-  host: accountcomplexms
-  protocol: http
-  port: 5000
-  path: "/addpaymentdetails"
-  routes:
-  - name: add-payment-details
-    paths:
-      - /api/v1/addpaymentdetails
-    protocols:
-      - http
-      - https
-- name: add-to-cart
-  host: addtocartms
-  protocol: http
-  port: 5030
-  path: "/add_to_cart"
-  routes:
-  - name: add-to-cart
-    paths:
-      - /api/v1/add_to_cart
-    protocols:
-      - http
-      - https
-- name: check-cart
-  host: addtocartms
-  protocol: http
-  port: 5030
-  path: "/check"
-  routes:
-  - name: check-cart
-    paths:
-      - /api/v1/check
-    protocols:
-      - http
-      - https
+  - name: auth-service
+    url: auth-service-host:3002
+    routes:
+      - name: auth-route
+        paths:
+          - /auth/callback
 
-- name: remove-from-cart
-  host: addtocartms
-  protocol: http
-  port: 5030
-  path: "/remove_from_cart"
-  routes:
-  - name: remove-from-cart
-    paths:
-      - /api/v1/remove_from_cart
-    protocols:
-      - http
-      - https
-
-- name: checkout
-  host: checkoutms
-  protocol: http
-  port: 5004
-  path: "/checkout"
-  routes:
-  - name: checkout
-    paths:
-      - /api/v1/checkout
-    protocols:
-      - http
-      - https
-
-- name: get-location
-  host: locationms
-  protocol: http
-  port: 8080
-  path: "/location"
-  routes:
-  - name: get-location
-    paths:
-      - /api/v1/location
-    protocols:
-      - http
-      - https
-      
-- name: get-inventory
-  host: inventorysrms
-  protocol: http
-  port: 80
-  path: "/api/products"
-  routes:
-  - name: get-inventory
-    paths:
-      - /api/v1/products
-    protocols:
-      - http
-      - https
-
-- name: update-inventory
-  host: inventorysrms
-  protocol: http
-  port: 80
-  path: "/api/products/add/"
-  routes:
-  - name: update-inventory
-    paths:
-      - /api/v1/products/add/
-    protocols:
-      - http
-      - https
-
-- name: get-payments
-  host: stripems
-  protocol: http
-  port: 5002
-  path: "/listallpayments"
-  routes:
-  - name: get-payments
-    paths:
-      - /api/v1/listallpayments
-    protocols:
-      - http
-      - https
-
-
-plugins:
-- name: cors
-  config: 
-    origins:
-    - "*"
-    methods:
-    - HEAD
-    - GET
-    - POST
-    - PUT
-    - PATCH
-    - DELETE
-    headers:
-    - Access-Control-Allow-Origin
-    - Accept
-    - Accept-Version
-    - Content-Length
-    - Content-MD5
-    - Content-Type
-    - Date
-    - X-Auth-Token
-    exposed_headers:
-    - X-Auth-Token
-    credentials: true
-    max_age: 3600
-    preflight_continue: false
+  - name: service-one
+    url: service-one-host
+    routes:
+      - name: service-one-route
+        paths:
+          - /service-one
+    plugins:
+      - name: authn-jwt
+        config:
+          jwt_secret: "your_jwt_secret"  
+          redis_host: "redis_host"       
+          redis_port: 6379               
+          redis_timeout: 2000         
+          
+  - name: service-two
+    url: service-two-host
+    routes:
+      - name: service-two-route
+        paths:
+          - /service-two
+    plugins:
+      - name: authn-jwt
+        config:
+          jwt_secret: "your_jwt_secret"  
+          redis_host: "redis_host"       
+          redis_port: 6379               
+          redis_timeout: 2000            
