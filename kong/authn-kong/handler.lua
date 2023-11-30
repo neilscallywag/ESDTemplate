@@ -52,7 +52,7 @@ function MyAuthHandler:access(conf)
   MyAuthHandler.super.access(self)
 
   local cookie = kong.request.get_header("Cookie")
-  local token = extractTokenFromCookie(cookie, "authToken")
+  local token = extractTokenFromCookie(cookie, "access_token")
 
   if not token or not checkTokenInRedis(token, conf) then
     return kong.response.exit(302, {}, {["Location"] = "/client/login"})
