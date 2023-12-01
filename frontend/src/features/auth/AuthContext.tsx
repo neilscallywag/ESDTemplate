@@ -72,49 +72,49 @@ const useProvideAuth = (): AuthContextType => {
     setIsAuthenticated(true);
   };
 
-  const googleAuth = (): void => {
-    googleLogin();
-    setWhoAmI("Neil");
-    setUserRole("STUDENT");
-    setUserEmail("Neil.sharma.2022@scis.smu.edu.sg");
-    setUserName("Neil SHARMA");
-    navigate("/dashboard");
-  };
+  // const googleAuth = (): void => {
+  //   googleLogin();
+  //   setWhoAmI("Neil");
+  //   setUserRole("STUDENT");
+  //   setUserEmail("Neil.sharma.2022@scis.smu.edu.sg");
+  //   setUserName("Neil SHARMA");
+  //   navigate("/dashboard");
+  // };
 
-  // const googleAuth = useGoogleLogin({
-  //   onSuccess: async ({ code }): Promise<void> => {
-  //     try {
-  //       await new Promise<void>((resolve) => {
-  //         setTimeout(resolve, 0);
-  //       });
+  const googleAuth = useGoogleLogin({
+    onSuccess: async ({ code }): Promise<void> => {
+      try {
+        await new Promise<void>((resolve) => {
+          setTimeout(resolve, 0);
+        });
 
-  //       const response = await api.post('/auth/google/callback', { code });
+        const response = await api.post("/auth/google/callback", { code });
 
-  //       // Handle the response using the provided function
-  //       const data = await handleResponse(response);
-  //       googleLogin();
-  //       setWhoAmI(data.user);
-  //       setUserRole(data.role);
-  //       setUserEmail(data.email);
-  //       setUserName(data.name);
-  //       navigate('/dashboard');
-  //     } catch (error) {
-  //       createErrorHandler(toast)(error as AxiosError<unknown, any>); // using the modified errorHandler to use toast
-  //     }
-  //   },
-  //   onError: (error): void => {
-  //     toast({
-  //       title: 'Google Login Error',
-  //       description: error.error_description
-  //         ? error.error_description
-  //         : 'An error occurred.',
-  //       status: 'error',
-  //       duration: 9000,
-  //       isClosable: true,
-  //     });
-  //   },
-  //   flow: 'auth-code',
-  // });
+        // Handle the response using the provided function
+        const data = await handleResponse(response);
+        googleLogin();
+        setWhoAmI(data.user);
+        setUserRole(data.role);
+        setUserEmail(data.email);
+        setUserName(data.name);
+        navigate("/dashboard");
+      } catch (error) {
+        createErrorHandler(toast)(error as AxiosError<unknown, any>); // using the modified errorHandler to use toast
+      }
+    },
+    onError: (error): void => {
+      toast({
+        title: "Google Login Error",
+        description: error.error_description
+          ? error.error_description
+          : "An error occurred.",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    },
+    flow: "auth-code",
+  });
 
   const checkSessionStatus = async (): Promise<boolean | undefined> => {
     try {
