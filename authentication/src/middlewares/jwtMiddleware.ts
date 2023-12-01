@@ -5,13 +5,16 @@ import { Secret } from 'jsonwebtoken';
 import * as jwt from 'jsonwebtoken';
 
 import logger from '../logging/logger';
+import { accessCookieOptions, refreshCookieOptions } from '../config/cookieOptions';
 
 config();
 
 class JWTHandler {
   private secretKey: Secret;
   private accessExp: string;
-  private cookieOptions: CookieOptions;
+  private refreshExp: string;
+  private accessCookieOptions: CookieOptions;
+  private refreshCookieOptions: CookieOptions;
 
   constructor() {
     const secret =
@@ -24,16 +27,14 @@ class JWTHandler {
       );
     }
     this.secretKey = secret;
-    this.accessExp = '1d';
+    this.accessExp = '10min';
+    this.refreshExp = '7d';
 
     // this should really be in its own config file
     // TODO: make this configurable
-    this.cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 24 * 60 * 60 * 1000,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    };
+    this.accessCookieOptions = accessCookieOptions;
+
+    this.refreshCookieOptions = refreshCookieOptions;
   }
 
   public createAccessToken(userId: string, role: string) {
@@ -41,7 +42,18 @@ class JWTHandler {
       const accessToken = jwt.sign({ userId, role }, this.secretKey, {
         expiresIn: this.accessExp,
       });
-      return { accessToken, accessCookieOptions: this.cookieOptions };
+      return { accessToken, accessCookieOptions: this.accessCookieOptions };
+    } catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  public createRefreshToken(userId: string) {
+    try {
+      const refreshToken = jwt.sign({ userId }, this.secretKey, {
+        expiresIn: this.refreshExp,
+      });
+      return { refreshToken, refreshCookieOptions: this.refreshCookieOptions };
     } catch (error) {
       throw new Error(String(error));
     }

@@ -12,6 +12,7 @@ class AuthController {
 
   async handleGoogleCallback(req: Request, res: Response) {
     const code = req.body?.code;
+    
     if (!code) {
       logger.info(
         'incoming request for google oauth callback did not have a code\n' +
@@ -21,16 +22,25 @@ class AuthController {
     }
 
     try {
-      const { accessToken, accessCookieOptions, userData } =
+      const { accessToken, accessCookieOptions, refreshToken, refreshCookieOptions, userData } =
         await this.authService.handleGoogleLogin(code);
 
-      const cookieName = process.env.COOKIE_NAME || 'access_token';
-      if (!process.env.COOKIE_NAME) {
+      const accessCookieName = process.env.ACCESS_COOKIE_NAME || 'access_token';
+      if (!process.env.ACCESS_COOKIE_NAME) {
         logger.warn(
           'Cookie name is not defined in env, falling back to access_token',
         );
       }
-      res.cookie(cookieName, accessToken, accessCookieOptions);
+
+      const refreshCookieName = process.env.REFRESH_COOKIE_NAME || 'access_token';
+      if (!process.env.REFRESH_COOKIE_NAME) {
+        logger.warn(
+          'Cookie name is not defined in env, falling back to access_token',
+        );
+      }
+
+      res.cookie(accessCookieName, accessToken, accessCookieOptions);
+      res.cookie(refreshCookieName, refreshToken, refreshCookieOptions);
       res.status(200).json({ success: true, userData });
     } catch (error) {
       logger.error('Error was thrown ' + error);
