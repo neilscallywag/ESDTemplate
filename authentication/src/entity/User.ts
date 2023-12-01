@@ -1,4 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
+import { UserAuth } from './UserAuth';
+import { UserDevice } from './UserDevice';
+import { UserLocation } from './UserLocation';
 
 @Entity()
 export class User {
@@ -6,11 +18,27 @@ export class User {
   id: number;
 
   @Column()
-  firstName: string;
+  username: string;
 
   @Column()
-  lastName: string;
+  email: string;
 
-  @Column()
-  age: number;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  // Relations
+  @OneToOne(() => UserAuth)
+  @JoinColumn()
+  auth: UserAuth;
+
+  @OneToOne(() => UserDevice)
+  @JoinColumn()
+  device: UserDevice;
+
+  @OneToOne(() => UserLocation)
+  @JoinColumn()
+  location: UserLocation;
 }
