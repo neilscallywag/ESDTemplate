@@ -108,6 +108,14 @@ services:
       - kong-gateway
     ports:
       - "3002:3002"
+  
+  service-three:
+    build: ../../downstream-services/service-three
+    image: service-three:1.0
+    depends_on:
+      - kong-gateway
+    ports:
+      - "8083:8083"
 
   auth-service:
     build: ../../authentication
