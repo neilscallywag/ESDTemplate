@@ -16,4 +16,4 @@ EXPOSE 8081
 ENV NAME World
 
 # Run app.py when the container launches
-CMD ["python", "flask.py"]
+CMD ["python", "app.py"]

@@ -12,12 +12,10 @@ COPY . .
 
 # Installing dependencies
 RUN npm install
-RUN npm install -g typescript
 
-RUN npm run build 
 
 # Starting our application
-CMD [ "npm", "run", "serve" ]
+CMD [ "npm", "run", "start" ]
 
 # Exposing server port
 EXPOSE 3000
