@@ -7,17 +7,23 @@ LOCAL_DEPLOY_DIR = "deployment/docker"
 # ---------------------------------------
 up:
 	@docker compose -p ${PROJECT_NAME} \
-					-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
-					up --build -d --remove-orphans
+		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
+		up --build -d --remove-orphans
 # ---------------------------------
 # For tearing down local deployment
 # ---------------------------------
 down:
 	@docker compose -p ${PROJECT_NAME} \
-				    -f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
-				    down
+		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
+		down
 down-clean:
 	@docker compose -p ${PROJECT_NAME} \
-				    -f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
-				    down --volumes --remove-orphans
+		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
+		down --volumes --remove-orphans
 	@docker system prune -f
+
+
+nobuild/up:
+	@docker-compose -p ${PROJECT_NAME} \
+		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
+		up -d
