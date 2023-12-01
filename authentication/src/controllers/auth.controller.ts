@@ -8,6 +8,7 @@ class AuthController {
 
   constructor() {
     this.authService = new AuthService();
+    this.handleGoogleCallback = this.handleGoogleCallback.bind(this);
   }
 
   async handleGoogleCallback(req: Request, res: Response) {
