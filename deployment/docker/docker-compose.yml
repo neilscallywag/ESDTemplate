@@ -125,7 +125,7 @@ services:
       - cache-service
       - mysql-database
     ports:
-      - "3003:3003"
+      - "3003:3000"
 
   frontend-client:
     build: ../../frontend
