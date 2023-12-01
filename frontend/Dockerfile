@@ -21,3 +21,5 @@ COPY . ./
 
 # Start the application using npm start
 CMD ["npm", "start"]
+
+EXPOSE 3000
