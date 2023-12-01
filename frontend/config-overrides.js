@@ -5,15 +5,15 @@
  * needed.
  * See https://www.npmjs.com/package/react-app-rewire-alias#outside-of-root.
  */
-const path = require('path');
-const { override } = require('customize-cra');
+const path = require("path");
+const { override } = require("customize-cra");
 const {
   aliasDangerous,
   configPaths,
   aliasJest,
-} = require('react-app-rewire-alias/lib/aliasDangerous');
+} = require("react-app-rewire-alias/lib/aliasDangerous");
 
-const aliasMap = configPaths('tsconfig.paths.json');
+const aliasMap = configPaths("tsconfig.paths.json");
 
 /**
  * Utility to allow for referencing folders outside of create-react-app root. \
@@ -25,10 +25,10 @@ const overridePath = (webpackConfig) => {
   const oneOfRule = webpackConfig.module.rules.find((rule) => rule.oneOf);
   if (oneOfRule) {
     const tsxRule = oneOfRule.oneOf.find(
-      (rule) => rule.test && rule.test.toString().includes('tsx'),
+      (rule) => rule.test && rule.test.toString().includes("tsx"),
     );
 
-    const newIncludePaths = [path.resolve(__dirname, '../shared')];
+    const newIncludePaths = [path.resolve(__dirname, "../shared")];
     if (tsxRule) {
       if (Array.isArray(tsxRule.include)) {
         tsxRule.include = [...tsxRule.include, ...newIncludePaths];

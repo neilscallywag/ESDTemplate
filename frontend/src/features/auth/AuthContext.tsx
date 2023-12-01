@@ -3,11 +3,11 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@chakra-ui/react';
-import { useGoogleLogin } from '@react-oauth/google';
-import { AxiosError } from 'axios';
+} from "react";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@chakra-ui/react";
+import { useGoogleLogin } from "@react-oauth/google";
+import { AxiosError } from "axios";
 
 import {
   GOOGLE_AUTH_KEY,
@@ -15,11 +15,11 @@ import {
   USER_NAME,
   USER_ROLE,
   WHO_AM_I,
-} from '~constants/auth';
+} from "~constants/auth";
 
-import { useLocalStorage } from './UseLocalStorage';
+import { useLocalStorage } from "./UseLocalStorage";
 
-import { api, createErrorHandler, handleResponse } from '~api';
+import { api, createErrorHandler, handleResponse } from "~api";
 
 interface AuthContextType {
   isAuthenticated: boolean | undefined;
@@ -44,7 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider component');
+    throw new Error("useAuth must be used within an AuthProvider component");
   }
   return context;
 };
@@ -74,11 +74,11 @@ const useProvideAuth = (): AuthContextType => {
 
   const googleAuth = (): void => {
     googleLogin();
-    setWhoAmI('Neil');
-    setUserRole('STUDENT');
-    setUserEmail('Neil.sharma.2022@scis.smu.edu.sg');
-    setUserName('Neil SHARMA');
-    navigate('/dashboard');
+    setWhoAmI("Neil");
+    setUserRole("STUDENT");
+    setUserEmail("Neil.sharma.2022@scis.smu.edu.sg");
+    setUserName("Neil SHARMA");
+    navigate("/dashboard");
   };
 
   // const googleAuth = useGoogleLogin({
@@ -118,10 +118,10 @@ const useProvideAuth = (): AuthContextType => {
 
   const checkSessionStatus = async (): Promise<boolean | undefined> => {
     try {
-      const response = await api.get('/auth/checkSession');
-      if (response.data && typeof response.data.isAuthenticated === 'boolean') {
+      const response = await api.get("/auth/checkSession");
+      if (response.data && typeof response.data.isAuthenticated === "boolean") {
         // we reset user roles here
-        const tempRole = response.data.role ? 'STAFF' : 'STUDENT';
+        const tempRole = response.data.role ? "STAFF" : "STUDENT";
         const localRole = userRole;
 
         if (tempRole !== localRole) {
@@ -132,10 +132,10 @@ const useProvideAuth = (): AuthContextType => {
         if (response.data.isAuthenticated !== isAuthenticated) {
           setIsAuthenticated(response.data.isAuthenticated);
           setWhoAmI(response.data.user);
-          if (response.data.role && typeof response.data.role === 'boolean') {
-            setUserRole('STAFF');
+          if (response.data.role && typeof response.data.role === "boolean") {
+            setUserRole("STAFF");
           } else {
-            setUserRole('STUDENT');
+            setUserRole("STUDENT");
           }
           setUserEmail(response.data.email);
           setUserName(response.data.name);

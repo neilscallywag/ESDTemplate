@@ -1,6 +1,6 @@
-import { Box, Button, Heading, Text } from '@chakra-ui/react';
+import { Box, Button, Heading, Text } from "@chakra-ui/react";
 
-import { useAuth } from '~auth/AuthContext';
+import { useAuth } from "~auth/AuthContext";
 
 const Dashboard = () => {
   const { userName, userEmail, userRole, logout } = useAuth();

@@ -1,10 +1,10 @@
-import BoundingBox from './BoundingBox';
+import BoundingBox from "./BoundingBox";
 
 class ImageManager {
   imageSrc: string;
   boundingBoxes: BoundingBox[];
   constructor() {
-    this.imageSrc = '';
+    this.imageSrc = "";
     this.boundingBoxes = [];
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,11 +29,11 @@ class ImageManager {
       // }
     } else {
       toast({
-        title: 'Cannot overlap.',
-        description: 'You cannot overlap an already created bounding box.',
-        status: 'error',
+        title: "Cannot overlap.",
+        description: "You cannot overlap an already created bounding box.",
+        status: "error",
         duration: 3000,
-        position: 'bottom-right',
+        position: "bottom-right",
         isClosable: true,
       });
     }
