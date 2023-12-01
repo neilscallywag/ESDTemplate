@@ -6,7 +6,20 @@ class RedisService {
   private client;
 
   constructor() {
-    this.client = createClient({ url: process.env.REDIS_URL });
+    if (!process.env.REDIS_URL) {
+      logger.error('REDIS_URL is not defined in .env');
+    }
+    if (!process.env.REDIS_PASSWORD) {
+      logger.error('REDIS_PASSWORD is not defined in .env');
+    }
+    this.client = createClient({
+      // username: 'default', Do not need if username is default
+      // password: process.env.REDIS_PASSWORD,
+      socket: {
+          host: process.env.REDIS_URL,
+          port: 6379,
+      }
+    })
     this.client.connect().catch((error: Error) => {
       logger.error(' Redis connection has failed at ' + error);
     });
