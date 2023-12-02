@@ -2,6 +2,7 @@ import { OAuth2Client } from 'google-auth-library';
 
 import logger from '../logging/logger';
 import JWTHandler from '../middlewares/JWT/jwtMiddleware';
+import { TokenType } from '../middlewares/JWT/interfaces';
 import { GoogleUserInfo } from '../types';
 
 import { GoogleAPIService } from './googleapi.service';
@@ -41,19 +42,26 @@ class AuthService {
         userAuth.access_token,
       );
 
-      const { accessToken, accessCookieOptions } =
-        this.jwtHandler.createAccessToken(userData.sub, 'role');
+      const userId = userData.sub; // google user id
 
-      const { refreshToken, refreshCookieOptions } =
-        this.jwtHandler.createRefreshToken(userData.sub);
+      const { token: accessToken, cookieOptions: accessCookieOptions } = 
+        this.jwtHandler.createToken(userId, TokenType.Access);
 
-      await this.redisService.set('userID', accessToken);
+      const { token: refreshToken, cookieOptions: refreshCookieOptions } = 
+        this.jwtHandler.createToken(userId, TokenType.Refresh);
+
+      const { token: identityToken, cookieOptions: identityCookieOptions } = 
+        this.jwtHandler.createToken(userId, TokenType.Identity, { name: userData.name, given_name: userData.given_name, family_name: userData.family_name });
+
+      await this.redisService.set(`refreshToken:${userId}`, refreshToken);
 
       return {
         accessToken,
         accessCookieOptions,
         refreshToken,
         refreshCookieOptions,
+        identityToken,
+        identityCookieOptions,
         userData,
       };
     } else {

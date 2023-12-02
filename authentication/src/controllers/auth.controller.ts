@@ -29,6 +29,8 @@ class AuthController {
         accessCookieOptions,
         refreshToken,
         refreshCookieOptions,
+        identityToken,
+        identityCookieOptions,
         userData,
       } = await this.authService.handleGoogleLogin(code);
 
@@ -47,11 +49,18 @@ class AuthController {
         );
       }
 
+      const identityCookieName =
+        process.env.IDENTITY_COOKIE_NAME || 'identity_token';
+      if (!process.env.IDENTITY_COOKIE_NAME) {
+        logger.warn(
+          'Cookie name is not defined in env, falling back to identity_token',
+        );
+      }
+
       logger.info('Sending cookies to client');
-      logger.info(accessCookieName, accessCookieOptions, accessToken);
-      logger.info(refreshCookieName, refreshCookieOptions, refreshToken);
       res.cookie(accessCookieName, accessToken, accessCookieOptions);
       res.cookie(refreshCookieName, refreshToken, refreshCookieOptions);
+      res.cookie(identityCookieName, identityToken, identityCookieOptions);
       res.status(200).json({ success: true, userData });
     } catch (error) {
       logger.error('Error was thrown ' + error);
@@ -63,6 +72,7 @@ class AuthController {
     try {
       res.clearCookie(process.env.ACCESS_COOKIE_NAME || 'access_token', { path: '/', expires: new Date(1) });
       res.clearCookie(process.env.REFRESH_COOKIE_NAME || 'refresh_token', { path: '/', expires: new Date(1) });
+      res.clearCookie(process.env.IDENTITY_COOKIE_NAME || 'identity_token', { path: '/', expires: new Date(1) });
   
       res.status(200).json({ message: 'Logout successful' });
     } catch (error) {
