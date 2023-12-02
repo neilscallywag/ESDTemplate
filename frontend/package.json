@@ -34,7 +34,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "watch": "npm install && nodemon --exec npm start",
-    "lint:fix": "eslint ./ --ignore-path .gitignore --fix && prettier . -c --write",
+    "lint:fix": "echo 'Running ESLint...' && eslint ./ --ignore-path .gitignore --fix && prettier . -c --write",
     "lint": "eslint ./ --ignore-path .gitignore && prettier . -c",
     "eject": "react-scripts eject"
   },
