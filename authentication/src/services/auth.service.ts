@@ -66,38 +66,44 @@ class AuthService {
 
       const userRoleParam: Role = Role.USER;
 
-      const user = await this.userService.createUser(
-        userParam,
-        userDeviceParam,
-        userLocationParam,
-        userRoleParam,
-      );
+      try {
+        const user = await this.userService.createUser(
+          userParam,
+          userDeviceParam,
+          userLocationParam,
+          userRoleParam,
+        );
+        logger.info(`User ${user.id} created.`);
 
-      const { token: accessToken, cookieOptions: accessCookieOptions } =
-        this.jwtHandler.createToken(user.id, TokenType.Access);
+        const { token: accessToken, cookieOptions: accessCookieOptions } =
+          this.jwtHandler.createToken(user.id, TokenType.Access);
 
-      const { token: refreshToken, cookieOptions: refreshCookieOptions } =
-        this.jwtHandler.createToken(user.id, TokenType.Refresh);
+        const { token: refreshToken, cookieOptions: refreshCookieOptions } =
+          this.jwtHandler.createToken(user.id, TokenType.Refresh);
 
-      const { token: identityToken, cookieOptions: identityCookieOptions } =
-        this.jwtHandler.createToken(user.id, TokenType.Identity, {
-          // REPLACE THESE WITH USER AUTH FINGERPRINTS @HelloTech69
-          name: userData.name,
-          given_name: userData.given_name,
-          family_name: userData.family_name,
-        });
+        const { token: identityToken, cookieOptions: identityCookieOptions } =
+          this.jwtHandler.createToken(user.id, TokenType.Identity, {
+            // REPLACE THESE WITH USER AUTH FINGERPRINTS @HelloTech69
+            name: userData.name,
+            given_name: userData.given_name,
+            family_name: userData.family_name,
+          });
 
-      await this.redisService.set(`refreshToken:${user.id}`, refreshToken);
+        await this.redisService.set(`refreshToken:${user.id}`, refreshToken);
 
-      return {
-        accessToken,
-        accessCookieOptions,
-        refreshToken,
-        refreshCookieOptions,
-        identityToken,
-        identityCookieOptions,
-        user,
-      };
+        return {
+          accessToken,
+          accessCookieOptions,
+          refreshToken,
+          refreshCookieOptions,
+          identityToken,
+          identityCookieOptions,
+          user,
+        };
+      } catch (error) {
+        logger.error(`Error authenticating user: ${error.message}`);
+        throw new Error(`Error authenticating user: ${error.message}`);
+      }
     } else {
       throw new Error('Google Oauth2 Access token is undefined.');
     }
