@@ -15,13 +15,13 @@ enum Role {
 
 @Entity()
 export class UserRole {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @OneToOne(() => User, (user) => user.role)
+  @JoinColumn({ name: 'userId' })
+  user: User;
 
   @Column({ type: 'enum', enum: Role, default: Role.USER })
   role: Role;
-
-  @OneToOne(() => User)
-  @JoinColumn()
-  user: User;
 }

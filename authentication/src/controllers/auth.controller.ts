@@ -70,17 +70,25 @@ class AuthController {
 
   async handleLogout(req: Request, res: Response) {
     try {
-      res.clearCookie(process.env.ACCESS_COOKIE_NAME || 'access_token', { path: '/', expires: new Date(1) });
-      res.clearCookie(process.env.REFRESH_COOKIE_NAME || 'refresh_token', { path: '/', expires: new Date(1) });
-      res.clearCookie(process.env.IDENTITY_COOKIE_NAME || 'identity_token', { path: '/', expires: new Date(1) });
-  
+      res.clearCookie(process.env.ACCESS_COOKIE_NAME || 'access_token', {
+        path: '/',
+        expires: new Date(1),
+      });
+      res.clearCookie(process.env.REFRESH_COOKIE_NAME || 'refresh_token', {
+        path: '/',
+        expires: new Date(1),
+      });
+      res.clearCookie(process.env.IDENTITY_COOKIE_NAME || 'identity_token', {
+        path: '/',
+        expires: new Date(1),
+      });
+
       res.status(200).json({ message: 'Logout successful' });
     } catch (error) {
       logger.error('Error was thrown ' + error);
       return res.status(401).json({ error: 'Logout unsuccessful' });
     }
   }
-  
 }
 
 export const authController = new AuthController();

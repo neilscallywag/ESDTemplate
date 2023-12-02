@@ -1,12 +1,14 @@
 import { OAuth2Client } from 'google-auth-library';
 
 import logger from '../logging/logger';
-import JWTHandler from '../middlewares/JWT/jwtMiddleware';
 import { TokenType } from '../middlewares/JWT/interfaces';
+import JWTHandler from '../middlewares/JWT/jwtMiddleware';
 import { GoogleUserInfo } from '../types';
 
 import { GoogleAPIService } from './googleapi.service';
 import RedisService from './redis.service';
+import { DatabaseService } from './typeorm.service';
+import { Role, UserService } from './user.service';
 
 class AuthService {
   private jwtHandler: JWTHandler;
@@ -15,11 +17,13 @@ class AuthService {
   // available and the same. IDK need to discuss this w @zt.yue
   private googleAPIService: GoogleAPIService;
   private redisService: RedisService;
+  private userService: UserService;
 
   constructor() {
     this.jwtHandler = new JWTHandler();
     this.googleAPIService = new GoogleAPIService();
     this.redisService = new RedisService();
+    this.userService = new UserService(DatabaseService);
   }
 
   async handleGoogleLogin(code: string) {
@@ -42,18 +46,48 @@ class AuthService {
         userAuth.access_token,
       );
 
-      const userId = userData.sub; // google user id
+      // FILL THE BLANKS WITH AUTH FINGERPRINTS @HelloTech69
 
-      const { token: accessToken, cookieOptions: accessCookieOptions } = 
-        this.jwtHandler.createToken(userId, TokenType.Access);
+      const userParam = {
+        name: userData.name,
+        email: userData.email,
+        googleAccessKey: userAuth.access_token,
+      };
 
-      const { token: refreshToken, cookieOptions: refreshCookieOptions } = 
-        this.jwtHandler.createToken(userId, TokenType.Refresh);
+      const userDeviceParam = {
+        ipAddress: '',
+        userAgent: '',
+        deviceType: '',
+      };
 
-      const { token: identityToken, cookieOptions: identityCookieOptions } = 
-        this.jwtHandler.createToken(userId, TokenType.Identity, { name: userData.name, given_name: userData.given_name, family_name: userData.family_name });
+      const userLocationParam = {
+        geolocation: '',
+      };
 
-      await this.redisService.set(`refreshToken:${userId}`, refreshToken);
+      const userRoleParam: Role = Role.USER;
+
+      const user = await this.userService.createUser(
+        userParam,
+        userDeviceParam,
+        userLocationParam,
+        userRoleParam,
+      );
+
+      const { token: accessToken, cookieOptions: accessCookieOptions } =
+        this.jwtHandler.createToken(user.id, TokenType.Access);
+
+      const { token: refreshToken, cookieOptions: refreshCookieOptions } =
+        this.jwtHandler.createToken(user.id, TokenType.Refresh);
+
+      const { token: identityToken, cookieOptions: identityCookieOptions } =
+        this.jwtHandler.createToken(user.id, TokenType.Identity, {
+          // REPLACE THESE WITH USER AUTH FINGERPRINTS @HelloTech69
+          name: userData.name,
+          given_name: userData.given_name,
+          family_name: userData.family_name,
+        });
+
+      await this.redisService.set(`refreshToken:${user.id}`, refreshToken);
 
       return {
         accessToken,
@@ -62,7 +96,7 @@ class AuthService {
         refreshCookieOptions,
         identityToken,
         identityCookieOptions,
-        userData,
+        user,
       };
     } else {
       throw new Error('Google Oauth2 Access token is undefined.');

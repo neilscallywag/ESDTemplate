@@ -1,12 +1,21 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+
+import { User } from './User';
 
 @Entity()
 export class UserLocation {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column()
-  userId: number;
+  @ManyToOne(() => User, (user) => user.location)
+  @JoinColumn({ name: 'userId' })
+  user: User;
 
   @Column()
   geolocation: string;

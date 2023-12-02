@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -11,16 +10,17 @@ import {
 import { UserAuth } from './UserAuth';
 import { UserDevice } from './UserDevice';
 import { UserLocation } from './UserLocation';
+import { UserRole } from './UserRole';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   username: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @CreateDateColumn()
@@ -30,15 +30,15 @@ export class User {
   updatedAt: Date;
 
   // Relations
-  @OneToOne(() => UserAuth)
-  @JoinColumn()
+  @OneToOne(() => UserAuth, (userAuth) => userAuth.user)
   auth: UserAuth;
 
-  @OneToOne(() => UserDevice)
-  @JoinColumn()
+  @OneToOne(() => UserDevice, (userDevice) => userDevice.user)
   device: UserDevice;
 
-  @OneToOne(() => UserLocation)
-  @JoinColumn()
+  @OneToOne(() => UserLocation, (userLocation) => userLocation.user)
   location: UserLocation;
+
+  @OneToOne(() => UserRole, (userRole) => userRole.user)
+  role: UserRole;
 }
