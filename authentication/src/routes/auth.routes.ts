@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.post('/google/callback', authController.handleGoogleCallback);
 
+router.get('/refreshToken', authController.handleRefreshToken);
+
 router.post('/logout', authController.handleLogout);
 
 export default router;

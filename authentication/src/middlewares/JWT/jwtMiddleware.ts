@@ -15,6 +15,7 @@ import {
   AccessClaims,
   IdentityClaims,
   RefreshClaims,
+  TokenPayload,
   TokenType,
 } from './interfaces';
 
@@ -41,42 +42,52 @@ class JWTHandler {
 
   public createToken(
     userId: string,
+    uniqueId: string,
     type: TokenType,
     claims?: AccessClaims | IdentityClaims | RefreshClaims,
   ) {
     try {
       let expiration: string;
       let cookieOptions: CookieOptions;
-      let payload: object;
+      let payload: TokenPayload;
 
       switch (type) {
-        case TokenType.Access:
-          expiration = this.accessExp;
-          cookieOptions = accessCookieOptions;
-          payload = { userId, ...(claims as AccessClaims) };
-          break;
         case TokenType.Refresh:
           expiration = this.refreshExp;
           cookieOptions = refreshCookieOptions;
-          payload = { userId, ...(claims as RefreshClaims) };
+          payload = { userId: userId, uniqueId: uniqueId, ...(claims as RefreshClaims) };
+          break;
+        case TokenType.Access:
+          expiration = this.accessExp;
+          cookieOptions = accessCookieOptions;
+          payload = { userId: userId, uniqueId: uniqueId, ...(claims as AccessClaims) };
           break;
         case TokenType.Identity:
           expiration = this.identityExp;
           cookieOptions = identityCookieOptions;
-          payload = { userId, ...(claims as IdentityClaims) };
+          payload = { userId: userId, uniqueId: uniqueId, ...(claims as IdentityClaims) };
           break;
         default:
           throw new Error('Invalid token type');
       }
 
       const token = this.createJWT(expiration, payload);
-      return { token, cookieOptions };
+      return { token, cookieOptions, uniqueId };
     } catch (error) {
       throw new Error(String(error));
     }
   }
 
-  private createJWT(expiresIn: string, payload: object) {
+  public verifyToken(token: string): TokenPayload {
+    try {
+      const decoded = jwt.verify(token, this.secretKey);
+      return decoded as TokenPayload;
+    } catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  private createJWT(expiresIn: string, payload: TokenPayload) {
     return jwt.sign(payload, this.secretKey, { expiresIn });
   }
 

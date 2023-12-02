@@ -1,3 +1,5 @@
+import { Request } from 'express';
+import * as expressUseragent from 'express-useragent';
 import { OAuth2Client } from 'google-auth-library';
 
 import logger from '../logging/logger';
@@ -26,7 +28,7 @@ class AuthService {
     this.userService = new UserService(DatabaseService);
   }
 
-  async handleGoogleLogin(code: string) {
+  async handleGoogleLogin(code: string, req: Request) {
     if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
       logger.error('Google Client ID or Client Secret is not defined in .env');
     }
@@ -46,18 +48,24 @@ class AuthService {
         userAuth.access_token,
       );
 
-      // FILL THE BLANKS WITH AUTH FINGERPRINTS @HelloTech69
+      const useragent = expressUseragent.parse(req.headers['user-agent']);
 
       const userParam = {
         name: userData.name,
         email: userData.email,
-        googleAccessKey: userAuth.access_token,
+        googleRefreshToken: userAuth.refresh_token,
       };
 
       const userDeviceParam = {
-        ipAddress: '',
-        userAgent: '',
-        deviceType: '',
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        deviceType: useragent.isDesktop
+          ? 'Desktop'
+          : useragent.isMobile
+            ? 'Mobile'
+            : useragent.isTablet
+              ? 'Tablet'
+              : 'Unknown',
       };
 
       const userLocationParam = {
@@ -75,21 +83,32 @@ class AuthService {
         );
         logger.info(`User ${user.id} created.`);
 
-        const { token: accessToken, cookieOptions: accessCookieOptions } =
-          this.jwtHandler.createToken(user.id, TokenType.Access);
+        const { token: refreshToken, cookieOptions: refreshCookieOptions, uniqueId: uniqueId } =
+          this.jwtHandler.createToken(user.id, JWTHandler.generateUniqueIdentifier(), TokenType.Refresh );
 
-        const { token: refreshToken, cookieOptions: refreshCookieOptions } =
-          this.jwtHandler.createToken(user.id, TokenType.Refresh);
+        const { token: accessToken, cookieOptions: accessCookieOptions } =
+          this.jwtHandler.createToken(user.id, uniqueId, TokenType.Access);
 
         const { token: identityToken, cookieOptions: identityCookieOptions } =
-          this.jwtHandler.createToken(user.id, TokenType.Identity, {
-            // REPLACE THESE WITH USER AUTH FINGERPRINTS @HelloTech69
+          this.jwtHandler.createToken(user.id, uniqueId, TokenType.Identity, {
             name: userData.name,
+            userRole: userRoleParam,
             given_name: userData.given_name,
             family_name: userData.family_name,
+            email: userData.email,
+            ipAddress: req.ip,
+            userAgent: req.headers['user-agent'],
+            deviceType: useragent.isDesktop
+              ? 'Desktop'
+              : useragent.isMobile
+                ? 'Mobile'
+                : useragent.isTablet
+                  ? 'Tablet'
+                  : 'Unknown',
+            geolocation: '',
           });
 
-        await this.redisService.set(`refreshToken:${user.id}`, refreshToken);
+        await this.redisService.set(`refreshToken:${refreshToken}`, user.id);
 
         return {
           accessToken,
@@ -106,6 +125,39 @@ class AuthService {
       }
     } else {
       throw new Error('Google Oauth2 Access token is undefined.');
+    }
+  }
+
+  async handleRenewToken(refreshToken: string) {
+    try {
+      const decoded = this.jwtHandler.verifyToken(refreshToken);
+
+      const userId = await this.redisService.get(`refreshToken:${refreshToken}`);
+
+      if (!userId || decoded.userId != userId) {
+        throw new Error('Refresh token is invalid');
+      }
+
+      const { token: accessToken, cookieOptions: accessCookieOptions } =
+        this.jwtHandler.createToken(userId, decoded.uniqueId, TokenType.Access);
+
+      return {
+        accessToken,
+        accessCookieOptions,
+      };
+    } catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  async handleLogout(refreshToken: string) {
+    try {
+      const result = await this.redisService.remove(`refreshToken:${refreshToken}`);
+      if (result === 0) {
+        throw new Error('Refresh token is invalid');
+      }
+    } catch (error) {
+      throw new Error(String(error));
     }
   }
 }

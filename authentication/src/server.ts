@@ -1,6 +1,7 @@
 import * as cors from 'cors';
 import { config } from 'dotenv';
 import * as express from 'express';
+import * as cookieParser from 'cookie-parser';
 
 import { corsOptions } from './config/corsOptions';
 import logger from './logging/logger';
@@ -22,6 +23,7 @@ if (!process.env.SERVER_PORT) {
 
 app.set('trust proxy', 1);
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
