@@ -11,7 +11,7 @@ export const api: AxiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, // automatically send cookies for authentication
+  withCredentials: true,
 });
 
 export const handleResponse = async <T>(
@@ -28,7 +28,7 @@ export const createErrorHandler =
     if (error.response) {
       const toastOptions: UseToastOptions = {
         title: "Error",
-        description: error.response.data as string, // Assuming error.response.data is a string
+        description: error.response.data as string,
         status: "error",
         duration: 9000,
         isClosable: true,
