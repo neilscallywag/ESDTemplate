@@ -1,12 +1,11 @@
 import { OAuth2Client } from 'google-auth-library';
 
+import logger from '../logging/logger';
 import JWTHandler from '../middlewares/jwtMiddleware';
 import { GoogleUserInfo } from '../types';
 
 import { GoogleAPIService } from './googleapi.service';
 import RedisService from './redis.service';
-
-import logger from '../logging/logger';
 
 class AuthService {
   private jwtHandler: JWTHandler;
@@ -45,12 +44,18 @@ class AuthService {
       const { accessToken, accessCookieOptions } =
         this.jwtHandler.createAccessToken(userData.sub, 'role');
 
-      const { refreshToken, refreshCookieOptions} =
+      const { refreshToken, refreshCookieOptions } =
         this.jwtHandler.createRefreshToken(userData.sub);
 
       // await this.redisService.set('userID', accessToken);
 
-      return { accessToken, accessCookieOptions, refreshToken, refreshCookieOptions, userData };
+      return {
+        accessToken,
+        accessCookieOptions,
+        refreshToken,
+        refreshCookieOptions,
+        userData,
+      };
     } else {
       throw new Error('Google Oauth2 Access token is undefined.');
     }

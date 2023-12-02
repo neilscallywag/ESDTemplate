@@ -1,14 +1,14 @@
 _format_version: "2.1"
 services:
   - name: auth-service
-    url: auth-service-host:3002
+    url: auth-service
     routes:
       - name: auth-route
         paths:
           - /auth/callback
 
   - name: service-one
-    url: service-one-host
+    url: service-one
     routes:
       - name: service-one-route
         paths:
@@ -22,7 +22,7 @@ services:
           redis_timeout: 2000         
 
   - name: service-two
-    url: service-two-host
+    url: service-two
     routes:
       - name: service-two-route
         paths:

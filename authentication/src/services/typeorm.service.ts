@@ -9,7 +9,7 @@ if (!process.env.DB_TYPE) {
   logger.error('DB_TYPE not set in .env');
 }
 export const DatabaseService = new DataSource({
-  type: process.env.DB_TYPE as 'postgres',
+  type: 'mysql',
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT),
   username: process.env.DB_USERNAME,
@@ -20,4 +20,5 @@ export const DatabaseService = new DataSource({
   entities: [User, UserAuth, UserDevice, UserLocation, UserRole],
   migrations: [],
   subscribers: [],
+  migrationsTableName: 'migrations',
 });

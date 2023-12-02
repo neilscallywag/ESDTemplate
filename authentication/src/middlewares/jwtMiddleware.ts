@@ -4,8 +4,11 @@ import { CookieOptions } from 'express';
 import { Secret } from 'jsonwebtoken';
 import * as jwt from 'jsonwebtoken';
 
+import {
+  accessCookieOptions,
+  refreshCookieOptions,
+} from '../config/cookieOptions';
 import logger from '../logging/logger';
-import { accessCookieOptions, refreshCookieOptions } from '../config/cookieOptions';
 
 config();
 

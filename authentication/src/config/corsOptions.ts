@@ -19,5 +19,5 @@ const production: cors.CorsOptions = {
   // exposedHeaders: ['Content-Range', 'X-Content-Range'],
 };
 
-export const corsOptions: cors.CorsOptions = 
+export const corsOptions: cors.CorsOptions =
   process.env.NODE_ENV === 'production' ? production : development;
