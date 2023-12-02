@@ -9,6 +9,7 @@ class AuthController {
   constructor() {
     this.authService = new AuthService();
     this.handleGoogleCallback = this.handleGoogleCallback.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
   async handleGoogleCallback(req: Request, res: Response) {
@@ -39,14 +40,16 @@ class AuthController {
       }
 
       const refreshCookieName =
-        process.env.REFRESH_COOKIE_NAME || 'access_token';
+        process.env.REFRESH_COOKIE_NAME || 'refresh_token';
       if (!process.env.REFRESH_COOKIE_NAME) {
         logger.warn(
-          'Cookie name is not defined in env, falling back to access_token',
+          'Cookie name is not defined in env, falling back to refresh_token',
         );
       }
 
       logger.info('Sending cookies to client');
+      logger.info(accessCookieName, accessCookieOptions, accessToken);
+      logger.info(refreshCookieName, refreshCookieOptions, refreshToken);
       res.cookie(accessCookieName, accessToken, accessCookieOptions);
       res.cookie(refreshCookieName, refreshToken, refreshCookieOptions);
       res.status(200).json({ success: true, userData });
@@ -55,6 +58,19 @@ class AuthController {
       return res.status(401).json({ error: 'OAuth callback failed' });
     }
   }
+
+  async handleLogout(req: Request, res: Response) {
+    try {
+      res.clearCookie(process.env.ACCESS_COOKIE_NAME || 'access_token', { path: '/', expires: new Date(1) });
+      res.clearCookie(process.env.REFRESH_COOKIE_NAME || 'refresh_token', { path: '/', expires: new Date(1) });
+  
+      res.status(200).json({ message: 'Logout successful' });
+    } catch (error) {
+      logger.error('Error was thrown ' + error);
+      return res.status(401).json({ error: 'Logout unsuccessful' });
+    }
+  }
+  
 }
 
 export const authController = new AuthController();

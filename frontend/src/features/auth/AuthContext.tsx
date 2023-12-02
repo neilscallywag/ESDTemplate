@@ -157,13 +157,17 @@ const useProvideAuth = (): AuthContextType => {
   }, [setIsAuthenticated, setWhoAmI, setUserRole, setUserEmail, setUserName]);
 
   const logout = async (): Promise<void> => {
-    // const response = await api.post('/auth/logout');
-    // if (response.status === 200) {
-    if (isAuthenticated) {
-      googleLogout();
+    try {
+      const response = await api.post('/auth/logout');
+      if (response.status === 200 && isAuthenticated) {
+        googleLogout();
+      }
+    } catch (error) {
+      createErrorHandler(toast)(error as AxiosError<unknown, any>);
     }
-    // }
   };
+  
+  
 
   useEffect(() => {
     checkSessionStatus();
