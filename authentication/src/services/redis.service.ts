@@ -18,16 +18,14 @@ class RedisService {
       );
       this.host = 'localhost';
     } else {
-      logger.info(process.env.REDIS_URL);
       this.host = process.env.REDIS_URL;
     }
     if (!process.env.REDIS_PASSWORD) {
       logger.error(
-        'REDIS_PASSWORD is not defined in .env. No password is beign used. ',
+        'REDIS_PASSWORD is not defined in .env. No password is being used. ',
       );
       this.password = '';
     } else {
-      logger.info(process.env.REDIS_PASSWORD);
       this.password = process.env.REDIS_PASSWORD;
     }
     this.client = createClient({
