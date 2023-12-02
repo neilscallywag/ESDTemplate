@@ -1,36 +1,62 @@
 _format_version: "2.1"
+
 services:
   - name: auth-service
-    url: auth-service
+    url: http://auth-service:3003
     routes:
-      - name: auth-route
+      - name: google-auth-callback
         paths:
-          - /auth/callback
+          - /auth/google/callback
+      - name: auth-logout
+        paths:
+          - /auth/logout
+      - name: auth-refresh-token
+        paths:
+          - /auth/refreshToken
 
   - name: service-one
-    url: service-one
+    url: http://service-one:3001
     routes:
-      - name: service-one-route
+      - name: service-one-ping
         paths:
-          - /service-one
-    plugins:
-      - name: authn-jwt
-        config:
-          jwt_secret: "your_jwt_secret"  
-          redis_host: "redis_host"       
-          redis_port: 6379               
-          redis_timeout: 2000         
+          - /service-one/ping
+      - name: service-one-test
+        paths:
+          - /service-one/test
 
   - name: service-two
-    url: service-two
+    url: http://service-two:3002
     routes:
-      - name: service-two-route
+      - name: service-two-ping
         paths:
-          - /service-two
-    plugins:
-      - name: authn-kong
-        config:
-          jwt_secret: "your_jwt_secret"  
-          redis_host: "redis_host"       
-          redis_port: 6379               
-          redis_timeout: 2000            
+          - /service-two/ping
+      - name: service-two-test
+        paths:
+          - /service-two/test
+
+  - name: service-three
+    url: http://service-three:8083
+    routes:
+      - name: service-three-ping
+        paths:
+          - /service-three/ping
+      - name: service-three-test
+        paths:
+          - /service-three/test
+
+plugins:
+  - name: authn-jwt
+    service: { service-name: service-one }
+    config:
+      jwt_secret: "your_jwt_secret"
+      redis_host: "redis_host"
+      redis_port: 6379
+      redis_timeout: 2000
+  - name: authn-kong
+    service: { service-name: service-two }
+    config:
+      jwt_secret: "your_jwt_secret"
+      redis_host: "redis_host"
+      redis_port: 6379
+      redis_timeout: 2000
+
