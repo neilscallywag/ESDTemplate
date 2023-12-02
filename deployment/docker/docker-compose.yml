@@ -30,8 +30,6 @@ services:
     depends_on:
       kong-database:
         condition: service_healthy
-      cache-service:
-        condition: service_healthy
     environment:
       <<: *common-env
       KONG_DATABASE: postgres
@@ -48,6 +46,8 @@ services:
       retries: 5
     secrets:
       - kong_db_password
+    restart: on-failure
+
 
   kong-database:
     image: postgres:latest
@@ -130,15 +130,35 @@ services:
     ports:
       - "8080:3000"
 
-  kong-migration:
+  kong-migrations:
     image: kong:latest
-    command: "kong migrations bootstrap"
-    networks:
-      - default
-    restart: on-failure
+    command: kong migrations bootstrap
+    depends_on:
+      kong-database:
+        condition: service_healthy
     environment:
       <<: *common-env
-    depends_on:
-      - kong-database
     secrets:
       - kong_db_password
+    networks:
+      - default
+    profiles:
+        - donotstart
+
+  kong-migrations-up:
+    image: kong:latest
+    command: kong migrations up && kong migrations finish
+    depends_on:
+      kong-database:
+        condition: service_healthy
+      kong-migrations:
+        condition: service_started
+    environment:
+      <<: *common-env
+    secrets:
+      - kong_db_password
+    networks:
+      - default
+    profiles:
+        - donotstart
+    

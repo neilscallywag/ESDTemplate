@@ -2,7 +2,7 @@ _format_version: "2.1"
 
 services:
   - name: auth-service
-    url: http://auth-service:3003
+    url: auth-service
     routes:
       - name: google-auth-callback
         paths:
@@ -15,7 +15,7 @@ services:
           - /auth/refreshToken
 
   - name: service-one
-    url: http://service-one:3001
+    url: service-one
     routes:
       - name: service-one-ping
         paths:
@@ -25,7 +25,7 @@ services:
           - /service-one/test
 
   - name: service-two
-    url: http://service-two:3002
+    url: service-two
     routes:
       - name: service-two-ping
         paths:
@@ -35,7 +35,7 @@ services:
           - /service-two/test
 
   - name: service-three
-    url: http://service-three:8083
+    url: service-three
     routes:
       - name: service-three-ping
         paths:
@@ -45,7 +45,7 @@ services:
           - /service-three/test
 
 plugins:
-  - name: authn-jwt
+  - name: authn-kong
     service: { service-name: service-one }
     config:
       jwt_secret: "your_jwt_secret"
@@ -59,4 +59,17 @@ plugins:
       redis_host: "redis_host"
       redis_port: 6379
       redis_timeout: 2000
-
+  - name: authn-kong
+    service: { service-name: service-three }
+    config:
+      jwt_secret: "your_jwt_secret"
+      redis_host: "redis_host"
+      redis_port: 6379
+      redis_timeout: 2000
+  - name: authn-kong
+    service: { service-name: auth-service }
+    config:
+      jwt_secret: "your_jwt_secret"
+      redis_host: "redis_host"
+      redis_port: 6379
+      redis_timeout: 2000

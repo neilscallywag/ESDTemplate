@@ -9,3 +9,6 @@
   redis_password:
     file: ./redis_password.txt
 ```
+
+# Kong
+Migrations image should refer to the same image as kong-gateway

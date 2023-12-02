@@ -9,6 +9,12 @@ up:
 	@docker compose -p ${PROJECT_NAME} \
 		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
 		up --build -d --remove-orphans
+
+kong-migrations:
+	@docker compose -p ${PROJECT_NAME} \
+		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
+		up kong-migrations 
+		
 # ---------------------------------
 # For tearing down local deployment
 # ---------------------------------
