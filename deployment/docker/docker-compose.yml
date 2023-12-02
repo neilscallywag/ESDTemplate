@@ -64,23 +64,20 @@ services:
     secrets:
       - kong_db_password
 
-  mysql-database:
+  mysqldb:
     image: mysql:8.0.29
     environment:
       MYSQL_DATABASE: "my_db"
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
-      MYSQL_PASSWORD_FILE: /run/secrets/mysql_password
+      MYSQL_PASSWORD: "password"
+      MYSQL_ROOT_PASSWORD: "password"
     volumes:
       - mysql-data:/var/lib/mysql
       - ./scripts/mysqldb_update_privileges.sh:/docker-entrypoint-initdb.d/mysqldb_update_privileges.sh
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
+        test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+        timeout: 20s
+        retries: 10
     read_only: false
-    secrets:
-      - mysql_root_password
-      - mysql_password
 
   cache-service:
     image: redis:7.2-rc2-alpine3.18
@@ -123,7 +120,7 @@ services:
     depends_on:
       - kong-gateway
       - cache-service
-      - mysql-database
+      - mysqldb
     ports:
       - "3003:3000"
 

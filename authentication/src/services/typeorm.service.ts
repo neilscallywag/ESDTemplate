@@ -5,9 +5,16 @@ import { DataSource } from 'typeorm';
 import { User, UserAuth, UserDevice, UserLocation, UserRole } from '../entity';
 import logger from '../logging/logger';
 
-if (!process.env.DB_TYPE) {
-  logger.error('DB_TYPE not set in .env');
+if (
+  !process.env.DB_HOST ||
+  !process.env.DB_PORT ||
+  !process.env.DB_USERNAME ||
+  !process.env.DB_PASSWORD ||
+  !process.env.DB_NAME
+) {
+  logger.error('DB not set in .env');
 }
+
 export const DatabaseService = new DataSource({
   type: 'mysql',
   host: process.env.DB_HOST,
