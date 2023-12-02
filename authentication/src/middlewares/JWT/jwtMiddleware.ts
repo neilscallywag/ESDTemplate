@@ -8,39 +8,19 @@ import {
   accessCookieOptions,
   identityCookieOptions,
   refreshCookieOptions,
-} from '../config/cookieOptions';
-import logger from '../logging/logger';
+} from '../../config/cookieOptions';
+import logger from '../../logging/logger';
+
+import {
+  AccessClaims,
+  IdentityClaims,
+  RefreshClaims,
+  TokenType,
+} from './interfaces';
 
 config();
-interface BaseClaims {
-  iss?: string; // Issuer
-  sub?: string; // Subject
-  aud?: string; // Audience
-  exp?: number; // Expiration Time
-  nbf?: number; // Not Before
-  iat?: number; // Issued At
-  jti?: string; // JWT ID
-}
 
 // refer to https://www.iana.org/assignments/jwt/jwt.xhtml for comprehensive list of claims
-interface AccessClaims extends BaseClaims {
-  scope?: string;
-  client_id?: string;
-}
-
-interface IdentityClaims extends BaseClaims {
-  name?: string;
-  given_name?: string;
-  family_name?: string;
-}
-
-interface RefreshClaims extends BaseClaims {}
-
-enum TokenType {
-  Access = 'access',
-  Refresh = 'refresh',
-  Identity = 'identity',
-}
 
 class JWTHandler {
   readonly secretKey: Secret;

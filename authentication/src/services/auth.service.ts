@@ -1,7 +1,7 @@
 import { OAuth2Client } from 'google-auth-library';
 
 import logger from '../logging/logger';
-import JWTHandler from '../middlewares/jwtMiddleware';
+import JWTHandler from '../middlewares/JWT/jwtMiddleware';
 import { GoogleUserInfo } from '../types';
 
 import { GoogleAPIService } from './googleapi.service';
