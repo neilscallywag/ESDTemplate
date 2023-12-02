@@ -1,22 +1,39 @@
+import { config } from 'dotenv';
 import { createClient } from 'redis';
 
 import logger from '../logging/logger';
 
+config();
+
 class RedisService {
-  private client;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private client: any;
+  private host: string;
+  private password: string;
 
   constructor() {
     if (!process.env.REDIS_URL) {
-      logger.error('REDIS_URL is not defined in .env');
+      logger.error(
+        'REDIS_URL is not defined in .env file. Using localhost as url',
+      );
+      this.host = 'localhost';
+    } else {
+      logger.info(process.env.REDIS_URL);
+      this.host = process.env.REDIS_URL;
     }
     if (!process.env.REDIS_PASSWORD) {
-      logger.error('REDIS_PASSWORD is not defined in .env');
+      logger.error(
+        'REDIS_PASSWORD is not defined in .env. No password is beign used. ',
+      );
+      this.password = '';
+    } else {
+      logger.info(process.env.REDIS_PASSWORD);
+      this.password = process.env.REDIS_PASSWORD;
     }
     this.client = createClient({
-      // username: 'default', Do not need if username is default
-      // password: process.env.REDIS_PASSWORD,
+      password: '$(cat /run/secrets/redis_password)',
       socket: {
-        host: process.env.REDIS_URL,
+        host: this.host,
         port: 6379,
       },
     });

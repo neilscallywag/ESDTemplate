@@ -46,6 +46,7 @@ class AuthController {
         );
       }
 
+      logger.info('Sending cookies to client');
       res.cookie(accessCookieName, accessToken, accessCookieOptions);
       res.cookie(refreshCookieName, refreshToken, refreshCookieOptions);
       res.status(200).json({ success: true, userData });

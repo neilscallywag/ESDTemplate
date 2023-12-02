@@ -47,7 +47,7 @@ class AuthService {
       const { refreshToken, refreshCookieOptions } =
         this.jwtHandler.createRefreshToken(userData.sub);
 
-      // await this.redisService.set('userID', accessToken);
+      await this.redisService.set('userID', accessToken);
 
       return {
         accessToken,
