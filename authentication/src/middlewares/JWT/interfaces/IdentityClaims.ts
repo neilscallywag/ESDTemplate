@@ -2,6 +2,7 @@ import { BaseClaims } from './BaseClaims';
 
 export interface IdentityClaims extends BaseClaims {
   name?: string; // Full name
+  userRole?: string; // User role
   given_name?: string; // Given name(s) or first name(s)
   family_name?: string; // Surname(s) or last name(s)
   middle_name?: string; // Middle name(s)
@@ -16,6 +17,10 @@ export interface IdentityClaims extends BaseClaims {
   birthdate?: string; // Birthday
   zoneinfo?: string; // Time zone
   locale?: string; // Locale
+  ipAddress?: string; // IP address
+  userAgent?: string; // User agent
+  deviceType?: string; // Device type
+  geolocation?: string; // Geolocation
   phone_number?: string; // Preferred telephone number
   phone_number_verified?: boolean; // True if the phone number has been verified; otherwise false
   address?: string; // Preferred postal address
