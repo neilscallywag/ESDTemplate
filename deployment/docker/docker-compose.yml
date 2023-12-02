@@ -25,7 +25,8 @@ volumes:
 
 services:
   kong-gateway:
-    image: kong:latest
+    build: ../../kong/
+    image: kong-service:1.0
     depends_on:
       kong-database:
         condition: service_healthy
@@ -34,6 +35,7 @@ services:
     environment:
       <<: *common-env
       KONG_DATABASE: postgres
+      KONG_PLUGINS: authn-kong
     ports:
       - "8000:8000" # Proxy
       - "8001:8001" # Admin API
