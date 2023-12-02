@@ -52,6 +52,10 @@ class RedisService {
     return await this.client.get(key);
   }
 
+  async remove(key: string): Promise<number> {
+    return await this.client.del(key);
+  }
+
   async getKeyByValue(value: string): Promise<string | null> {
     logger.error('getKeyByValue is not implemented yet. Search Key: ' + value);
     return null;
