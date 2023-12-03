@@ -25,15 +25,12 @@ volumes:
 
 services:
   kong-gateway:
-    build: ../../kong/
-    image: kong-service:1.0
-    depends_on:
-      kong-database:
-        condition: service_healthy
+    image: kong:latest
     environment:
       <<: *common-env
-      KONG_DATABASE: postgres
-      KONG_PLUGINS: authn-kong
+      KONG_DATABASE: off
+      # KONG_PLUGINS: authn-kong
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml 
     ports:
       - "8000:8000" # Proxy
       - "8001:8001" # Admin API
@@ -47,10 +44,15 @@ services:
     secrets:
       - kong_db_password
     restart: on-failure
+    volumes:
+      - ../../kong/kong.yml:/etc/kong/kong.yml 
+
 
 
   kong-database:
     image: postgres:latest
+    profiles:
+      - database
     environment:
       POSTGRES_DB: kong
       POSTGRES_USER: kong
@@ -132,6 +134,7 @@ services:
 
   kong-migrations:
     image: kong:latest
+
     command: kong migrations bootstrap
     depends_on:
       kong-database:
@@ -144,6 +147,7 @@ services:
       - default
     profiles:
         - donotstart
+        - database
 
   kong-migrations-up:
     image: kong:latest
@@ -161,4 +165,5 @@ services:
       - default
     profiles:
         - donotstart
+        - database
     
