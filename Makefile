@@ -1,23 +1,35 @@
 PROJECT_NAME = "esd"
-LOCAL_DEPLOY_DIR = "deployment/local"
-SHELL := /bin/bash
+LOCAL_DEPLOY_DIR = "deployment/docker"
+
 
 # ---------------------------------------
 # For deploying docker containers locally
 # ---------------------------------------
-
-
-kube-up:
+up:
 	@docker compose -p ${PROJECT_NAME} \
-					-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
-					up --build  && \
-	source ./${LOCAL_DEPLOY_DIR}/.env && \
-	kubectl apply -f ${LOCAL_DEPLOY_DIR}/kubernetes-manifest.yaml
+		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
+		up --build -d --remove-orphans
 
-
-kube-down-clean:
+kong-migrations:
+	@docker compose -p ${PROJECT_NAME} \
+		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
+		up kong-migrations 
+		
+# ---------------------------------
+# For tearing down local deployment
+# ---------------------------------
+down:
+	@docker compose -p ${PROJECT_NAME} \
+		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
+		down
+down-clean:
 	@docker compose -p ${PROJECT_NAME} \
 		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
 		down --volumes --remove-orphans
 	@docker system prune -f
-	@kubectl delete services --all -n default
+
+
+nobuild/up:
+	@docker-compose -p ${PROJECT_NAME} \
+		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
+		up -d

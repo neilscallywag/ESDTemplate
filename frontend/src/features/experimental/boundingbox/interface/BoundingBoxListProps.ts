@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import ImageManager from '../ImageManager';
+import ImageManager from "../ImageManager";
 
 export interface BoundingBoxListProps {
   imageManager: ImageManager;

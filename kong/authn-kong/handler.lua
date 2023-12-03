@@ -1,75 +1,103 @@
-local BasePlugin = require "kong.plugins.base_plugin"
+-- Required libraries
 local jwt = require "resty.jwt"
-local redis = require "resty.redis"
-local kong = kong
+local cjson = require "cjson.safe"
+local http = require "resty.http"
+local ck = require "resty.cookie"
 
-local MyAuthHandler = BasePlugin:extend()
+-- Plugin handler
+local MyAuthHandler = {
+    PRIORITY = 1000,
+    VERSION = "1.0",
+}
 
-MyAuthHandler.PRIORITY = 1000
-MyAuthHandler.VERSION = "1.0.0"
-
-function MyAuthHandler:new()
-  MyAuthHandler.super.new(self, "authn-kong")
-end
-
-local function extractTokenFromCookie(cookie, tokenName)
-  if not cookie then
-    return nil
-  end
-
-  local tokenPattern = tokenName .. "=([^;]+)"
-  local token = cookie:match(tokenPattern)
-  return token
-end
-
-local function checkTokenInRedis(token, conf)
-  local red = redis:new()
-  red:set_timeout(conf.redis_timeout) -- Redis connection timeout
-
-  -- likely will throw error because no password is provided no is there any username
-  local ok, err = red:connect(conf.redis_host, conf.redis_port)
-  if not ok then
-    kong.log.err("Failed to connect to Redis: ", err)
+-- Function to check if the endpoint is unauthenticated
+local function isUnauthenticatedEndpoint(path, unauthenticated_endpoints)
+    for _, endpoint in ipairs(unauthenticated_endpoints) do
+        if path == endpoint then
+            return true
+        end
+    end
     return false
-  end
-
-  local res, err = red:get(token)
-  if not res then
-    kong.log.err("Failed to retrieve token from Redis: ", err)
-    return false
-  end
-
-  -- Close Redis connection
-  local ok, err = red:set_keepalive(10000, 100) -- 10 sec idle timeout, 100 connections pool
-  if not ok then
-    kong.log.err("Failed to set Redis keepalive: ", err)
-  end
-
-  return res ~= ngx.null
 end
 
+-- Function to validate the access token
+local function validateAccessToken(token, jwt_secret)
+    local validated_token = jwt:verify(jwt_secret, token)
+
+    if validated_token.verified then
+        return true, validated_token.payload
+    else
+        kong.log.err("JWT validation failed: ", validated_token.reason)
+        return false, nil
+    end
+end
+
+-- Function to forward claims as headers
+local function forwardClaimsAsHeaders(claims)
+    for k, v in pairs(claims) do
+        kong.service.request.set_header("X-Claim-" .. k, v)
+    end
+end
+
+-- Function to refresh the access token
+local function refreshAccessToken(refreshToken, refresh_endpoint)
+    local httpClient = http.new()
+    httpClient:set_timeout(5000)
+
+    local res, err = httpClient:request_uri(refresh_endpoint, {
+        method = "POST",
+        headers = {["Content-Type"] = "application/json"},
+        body = cjson.encode({ refresh_token = refreshToken }),
+    })
+
+    if not res then
+        kong.log.err("failed to request: ", err)
+        return nil
+    end
+
+    if res.status ~= 200 then
+        kong.log.err("failed to refresh token: ", res.body)
+        return nil
+    end
+
+    local body = cjson.decode(res.body)
+    return { claims = body.newAccessToken }
+end
+
+-- Access phase handler
 function MyAuthHandler:access(conf)
-  MyAuthHandler.super.access(self)
+    local path = kong.request.get_path()
+    kong.log.notice("The path is ", path)
 
-  local cookie = kong.request.get_header("Cookie")
-  local token = extractTokenFromCookie(cookie, "authToken")
+    local cookies, err = ck:new()
+    if not cookies then
+        return kong.response.exit(500, "Failed to create resty.cookie instance: " .. err)
+    end
 
-  if not token or not checkTokenInRedis(token, conf) then
-    return kong.response.exit(302, {}, {["Location"] = "/client/login"})
-  end
+    local accessToken, err = cookies:get("access_token")
+    local refreshToken, err = cookies:get("refresh_token")
 
-  -- Validate token and get payload
-  local jwtToken = jwt:verify(conf.jwt_secret, token)
-  if not jwtToken.verified then
-    return kong.response.exit(302, {}, {["Location"] = "/client/login"})
-  end
+    if isUnauthenticatedEndpoint(path, conf.unauthenticated_endpoints) and not accessToken then
+        return
+    end
 
-  local userID = jwtToken.payload.userID
-  local userRole = jwtToken.payload.userRole
+    if not accessToken then
+        return kong.response.exit(401, "No access token provided")
+    end
 
-  kong.service.request.set_header("UserID", userID)
-  kong.service.request.set_header("UserRole", userRole)
-  kong.service.request.set_header("Authorization", "Bearer " .. token)
+    local isValid, claims = validateAccessToken(accessToken, conf.jwt_secret)
+
+    if isValid then
+        forwardClaimsAsHeaders(claims)
+    else
+        local newAccessToken = refreshAccessToken(refreshToken, conf.refresh_endpoint)
+        if newAccessToken then
+            forwardClaimsAsHeaders(newAccessToken.claims)
+        else
+            return kong.response.exit(401, "Invalid Tokens")
+        end
+    end
 end
 
+-- Return the handler
 return MyAuthHandler
