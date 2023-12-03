@@ -21,14 +21,12 @@ jobs:
     - name: Install dependencies in authentication directory
       run: |
         ls
-        cd ../
         cd authentication
         npm install
 
     - name: Run lint:fix in authentication directory
       run: |
         ls
-        cd ../
         cd authentication
         npm run lint:fix
 
