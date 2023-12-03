@@ -14,5 +14,4 @@ RUN npm install
 # Starting our application
 CMD [ "npm", "run", "start" ]
 
-# Exposing server port
-EXPOSE 3000
+

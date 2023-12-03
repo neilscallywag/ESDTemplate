@@ -1,96 +1,67 @@
-_format_version: "2.1"
+_format_version: "3.0"
+_transform: true
 
 services:
   - name: auth-service
     url: http://auth-service
-    plugins:
-      - name: cors
-        config:
-          origins:
-            - http://localhost:8080
-          methods:
-            - GET
-            - POST
-            - PUT
-            - DELETE
-            - PATCH
-            - OPTIONS
-          headers:
-            - Accept
-            - Authorization
-            - Content-Type
-            - X-Requested-With
-          credentials: true
-          preflight_continue: false
-          exposed_headers:
-            - Authorization
     routes:
-      - name: google-auth-callback
+      - name: auth
         paths:
-          - /auth/google/callback
-      - name: auth-logout
-        paths:
-          - /auth/logout
-      - name: auth-refresh-token
-        paths:
-          - /auth/refreshToken
+          - /auth
+        strip_path: false
 
   - name: service-one
     url: http://service-one
     routes:
-      - name: service-one-ping
+      - name: one
         paths:
-          - /service-one/ping
-      - name: service-one-test
-        paths:
-          - /service-one/test
+          - /one
+        strip_path: false
 
   - name: service-two
     url: http://service-two
     routes:
-      - name: service-two-ping
+      - name: two
         paths:
-          - /service-two/ping
-      - name: service-two-test
-        paths:
-          - /service-two/test
+          - /two
+        strip_path: false
 
   - name: service-three
     url: http://service-three
     routes:
-      - name: service-three-ping
+      - name: three
         paths:
-          - /service-three/ping
-      - name: service-three-test
-        paths:
-          - /service-three/test
+          - /three
+        strip_path: false
 
-# plugins:
-#   - name: authn-kong
-#     service: { service-name: service-one }
-#     config:
-#       jwt_secret: "your_jwt_secret"
-#       redis_host: "redis_host"
-#       redis_port: 6379
-#       redis_timeout: 2000
-#   - name: authn-kong
-#     service: { service-name: service-two }
-#     config:
-#       jwt_secret: "your_jwt_secret"
-#       redis_host: "redis_host"
-#       redis_port: 6379
-#       redis_timeout: 2000
-#   - name: authn-kong
-#     service: { service-name: service-three }
-#     config:
-#       jwt_secret: "your_jwt_secret"
-#       redis_host: "redis_host"
-#       redis_port: 6379
-#       redis_timeout: 2000
-#   - name: authn-kong
-#     service: { service-name: auth-service }
-#     config:
-#       jwt_secret: "your_jwt_secret"
-#       redis_host: "redis_host"
-#       redis_port: 6379
-#       redis_timeout: 2000
+plugins:
+  - name: cors
+    config: 
+      origins:
+        - "*"
+      methods:
+        - HEAD
+        - GET
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+      headers:
+        - Access-Control-Allow-Origin
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - Authorization
+      exposed_headers:
+        - Authorization
+      credentials: true
+      max_age: 3600
+      preflight_continue: false
+
+  - name: rate-limiting
+    config: 
+      minute: 100
+      policy: local

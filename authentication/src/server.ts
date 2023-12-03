@@ -1,7 +1,7 @@
+import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import { config } from 'dotenv';
 import * as express from 'express';
-import * as cookieParser from 'cookie-parser';
 
 import { corsOptions } from './config/corsOptions';
 import logger from './logging/logger';
@@ -15,7 +15,7 @@ if (result.error) {
   logger.info('Loaded .env file successfully');
 }
 const app = express();
-const port = process.env.SERVER_PORT || 3000;
+const port = process.env.SERVER_PORT || 80;
 
 if (!process.env.SERVER_PORT) {
   logger.error('Port is not defined, falling back to 3000');

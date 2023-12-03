@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/google/callback', authController.handleGoogleCallback);
 
-router.get('/refresh', authController.handleRefreshToken);
+router.post('/refresh', authController.handleRefreshToken);
 
 router.post('/logout', authController.handleLogout);
 
