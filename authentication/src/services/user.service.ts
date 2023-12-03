@@ -89,13 +89,13 @@ class UserService {
           geolocation: locationData.geolocation,
         });
         await this.userLocationRepo.save(userLocation);
-      }
 
-      const userRoleEntity = this.userRoleRepo.create({
-        user: user,
-        role: userRole,
-      });
-      await this.userRoleRepo.save(userRoleEntity);
+        const userRoleEntity = this.userRoleRepo.create({
+          user: user,
+          role: userRole,
+        });
+        await this.userRoleRepo.save(userRoleEntity);
+      }
 
       await queryRunner.commitTransaction();
       return user;
