@@ -92,7 +92,7 @@ class AuthController {
 
       logger.info('Sending cookies to client');
       res.cookie(accessCookieName, accessToken, accessCookieOptions);
-      res.status(200).json({ success: true });
+      res.status(200).json({ success: true, newAccessToken: accessToken });
     } catch (error) {
       logger.error('Error was thrown ' + error);
       return res.status(401).json({ error: 'Refresh token failed' });
@@ -101,7 +101,7 @@ class AuthController {
 
   async handleLogout(req: Request, res: Response) {
     const refreshToken = req.cookies['refresh_token'];
-    
+
     try {
       if (!refreshToken) {
         logger.info(
