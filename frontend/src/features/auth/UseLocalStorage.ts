@@ -1,7 +1,7 @@
 // Retrieved from https://usehooks-typescript.com/react-hook/use-local-storage
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
-import { LOCAL_STORAGE_EVENT } from '~constants/auth';
+import { LOCAL_STORAGE_EVENT } from "~constants/auth";
 
 export const useLocalStorage = <T>(
   key: string,
@@ -11,7 +11,7 @@ export const useLocalStorage = <T>(
   // parse stored json or return initialValue
   const readValue = useCallback(() => {
     // Prevent build error "window is undefined" but keep keep working
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return initialValue;
     }
     try {
@@ -54,11 +54,11 @@ export const useLocalStorage = <T>(
       setStoredValue(readValue());
     };
     // this only works for other documents, not the current one
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
     // this is a custom event, triggered in writeValueToLocalStorage
     window.addEventListener(LOCAL_STORAGE_EVENT, handleStorageChange);
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener(LOCAL_STORAGE_EVENT, handleStorageChange);
     };
   }, [readValue]);

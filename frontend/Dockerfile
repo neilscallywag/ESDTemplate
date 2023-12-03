@@ -1,23 +1,17 @@
 # Use an official Node.js runtime as a parent image
-FROM node:13.12.0
+FROM node:slim
 
 # Set the working directory in the container to /app
 WORKDIR /app
 
-# Add `/app/node_modules/.bin` to the $PATH environment variable
-ENV PATH /app/node_modules/.bin:$PATH
+# Copying all the files in our project
+COPY . .
 
-# Copy the package.json and package-lock.json files into the container
-COPY package*.json ./
+# Installing dependencies
+RUN apt update && apt install curl -y
+RUN npm install
 
-# Install project dependencies, including TypeScript, with npm
-RUN npm install --silent
+# Starting our application
+CMD [ "npm", "run", "start" ]
 
-# Install react-scripts globally
-RUN npm install react-scripts@3.4.1 -g --silent
 
-# Copy the entire project into the container
-COPY . ./
-
-# Start the application using npm start
-CMD ["npm", "start"]

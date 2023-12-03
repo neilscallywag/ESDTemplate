@@ -1,6 +1,9 @@
 This project was bootstrapped with
 [Create React App](https://github.com/facebook/create-react-app).
 
+## TODO:
+Change API_BASE_URL in src/constants/routes.ts accordingly
+
 ## Available Scripts
 
 In the project directory, you can run:

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -9,16 +9,16 @@ import {
   List,
   ListItem,
   useToast,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 
-import BoundingBox from './BoundingBox';
-import ImageManager from './ImageManager';
+import BoundingBox from "./BoundingBox";
+import ImageManager from "./ImageManager";
 import {
   BoundingBoxCoordinates,
   BoundingBoxListProps,
   BoundingBoxProps,
   ImageWithBoundingBoxProps,
-} from './interface';
+} from "./interface";
 
 export default function App() {
   const [imageManager, setImageManager] = useState<ImageManager>(
@@ -83,10 +83,10 @@ export default function App() {
       <CSSReset />
       <Center>
         <Box
-          maxW={'1200px'}
+          maxW={"1200px"}
           id="LOLOL"
-          alignContent={'center'}
-          border={'3px solid black'}
+          alignContent={"center"}
+          border={"3px solid black"}
         >
           {!imageManager.imageSrc && (
             <Input type="file" accept="image/*" onChange={handleImageUpload} />
@@ -121,8 +121,8 @@ const ImageWithBoundingBox: React.FC<ImageWithBoundingBoxProps> = ({
 }) => {
   return (
     <Box
-      maxW={'1200px'}
-      style={{ position: 'relative', resize: 'both', overflow: 'auto' }}
+      maxW={"1200px"}
+      style={{ position: "relative", resize: "both", overflow: "auto" }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -132,7 +132,7 @@ const ImageWithBoundingBox: React.FC<ImageWithBoundingBoxProps> = ({
         draggable={false}
         src={imageManager.imageSrc}
         alt="Uploaded"
-        style={{ maxWidth: '100%' }}
+        style={{ maxWidth: "100%" }}
       />
       {imageManager.boundingBoxes.map((box, index) => (
         <BoundingBoxComponent coordinates={box} key={index} />
@@ -148,14 +148,14 @@ const BoundingBoxComponent: React.FC<BoundingBoxProps> = ({
 }) => {
   return (
     <Box
-      className={temp ? 'temp-bounding-box' : 'bounding-box'}
+      className={temp ? "temp-bounding-box" : "bounding-box"}
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: `${coordinates.y}%`,
         left: `${coordinates.x}%`,
         width: `${coordinates.width}%`,
         height: `${coordinates.height}%`,
-        border: temp ? '5px dashed red' : '3px solid green',
+        border: temp ? "5px dashed red" : "3px solid green",
       }}
     />
   );

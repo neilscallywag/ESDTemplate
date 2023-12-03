@@ -1,8 +1,8 @@
-import React from 'react';
-import { GoogleLoginButton } from 'react-social-login-buttons';
-import { Box } from '@chakra-ui/react';
+import React from "react";
+import { GoogleLoginButton } from "react-social-login-buttons";
+import { Box } from "@chakra-ui/react";
 
-import { useAuth } from '~features/auth';
+import { useAuth } from "~features/auth";
 
 const LandingPage: React.FC = () => {
   const { googleAuth } = useAuth();

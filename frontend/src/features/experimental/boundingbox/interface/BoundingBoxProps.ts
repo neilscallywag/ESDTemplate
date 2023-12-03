@@ -1,4 +1,4 @@
-import { BoundingBoxCoordinates } from './BoundingBoxCoordinates';
+import { BoundingBoxCoordinates } from "./BoundingBoxCoordinates";
 
 export interface BoundingBoxProps {
   coordinates: BoundingBoxCoordinates;

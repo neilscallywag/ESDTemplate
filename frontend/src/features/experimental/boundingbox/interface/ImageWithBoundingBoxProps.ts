@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
-import ImageManager from '../ImageManager';
+import ImageManager from "../ImageManager";
 
-import { BoundingBoxCoordinates } from './BoundingBoxCoordinates';
+import { BoundingBoxCoordinates } from "./BoundingBoxCoordinates";
 
 export interface ImageWithBoundingBoxProps {
   imageManager: ImageManager;

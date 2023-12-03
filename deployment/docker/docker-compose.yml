@@ -1,41 +1,72 @@
 version: "3.8"
 
+secrets:
+  kong_db_password:
+    file: ./kong_db_password.txt
+  mysql_root_password:
+    file: ./mysql_root_password.txt
+  mysql_password:
+    file: ./mysql_password.txt
+  redis_password:
+    file: ./redis_password.txt
+
+x-common-env:
+  &common-env
+  KONG_PG_HOST: kong-database
+  KONG_PG_USER: kong
+  KONG_PG_PASSWORD_FILE: /run/secrets/kong_db_password
+
+networks:
+  default:
+
+volumes:
+  mysql-data: {}
+  kong-data: {}
+
 services:
-  kong:
+  kong-gateway:
     image: kong:latest
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+    build: ../../kong
     environment:
-      KONG_DATABASE: postgres
-      KONG_PG_HOST: postgres
-      KONG_PG_PASSWORD: kong
+      <<: *common-env
+      KONG_DATABASE: off
+      KONG_PLUGINS: bundled,authn-kong
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml 
     ports:
       - "8000:8000" # Proxy
       - "8001:8001" # Admin API
       - "8443:8443" # Proxy SSL
       - "8444:8444" # Admin API SSL
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 10s
       timeout: 5s
       retries: 5
+    secrets:
+      - kong_db_password
+    restart: on-failure
+    volumes:
+      - ../../kong/kong.yml:/etc/kong/kong.yml 
+      - ../../kong/authn-kong:/usr/local/share/lua/5.1/kong/plugins/authn-kong 
 
-  postgres-kong:
+  kong-database:
     image: postgres:latest
+    profiles:
+      - database
     environment:
       POSTGRES_DB: kong
       POSTGRES_USER: kong
-      POSTGRES_PASSWORD: kong
+      POSTGRES_PASSWORD_FILE: /run/secrets/kong_db_password
     volumes:
-      - kong-db:/var/lib/postgresql/data
+      - kong-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready", "-U", "kong"]
       interval: 10s
       timeout: 5s
       retries: 5
+    read_only: false
+    secrets:
+      - kong_db_password
 
   mysqldb:
     image: mysql:8.0.29
@@ -44,57 +75,95 @@ services:
       MYSQL_PASSWORD: "password"
       MYSQL_ROOT_PASSWORD: "password"
     volumes:
-      - my-db:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
       - ./scripts/mysqldb_update_privileges.sh:/docker-entrypoint-initdb.d/mysqldb_update_privileges.sh
     healthcheck:
         test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
         timeout: 20s
         retries: 10
+    read_only: false
 
-  service-one:
-    build: ../../downstream-services/service-one
-    image: service-one:1.0
-    depends_on:
-      - kong
-    ports:
-      - "3001:3001"
+  cache-service:
+    image: redis:7.2-rc2-alpine3.18
+    command: ["redis-server", "--requirepass", "$(cat /run/secrets/redis_password)"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "/run/secrets/redis_password", "--raw", "incr", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    secrets:
+      - redis_password
 
+  # service-one:
+  #   build: ../../downstream-services/service-one
+  #   image: service-one:1.0
+  #   depends_on:
+  #     - kong-gateway
 
-  service-two:
-    build: ../../downstream-services/service-two
-    image: service-two:1,0
-    depends_on:
-      - kong
-    ports:
-      - "3002:3002"
-
+  # service-two:
+  #   build: ../../downstream-services/service-two
+  #   image: service-two:1.0
+  #   depends_on:
+  #     - kong-gateway
+  
+  # service-three:
+  #   build: ../../downstream-services/service-three
+  #   image: service-three:1.0
+  #   depends_on:
+  #     - kong-gateway
 
   auth-service:
     build: ../../authentication
     image: auth-service:1.0
     depends_on:
-      - kong
-      - redis
-      - postgres
-    ports:
-      - "3003:3003"
+      mysqldb:
+        condition: service_healthy
+      kong-gateway:
+      # remember to change this to healthy. Currently is unhealthy
+        condition: service_started 
+      cache-service:
+        condition: service_healthy
 
-
-  client:
+  frontend-client:
     build: ../../frontend
     image: client:1.0
     depends_on:
-      - service-one
-      - service-two
+      - kong-gateway
+    ports:
+      - "8080:3000"
 
-  redis:
-    image: redis:7.2-rc2-alpine3.18
-    command: redis-server --requirepass password
-    healthcheck:
-      test: [ "CMD", "redis-cli", "-a", "password", "--raw", "incr", "ping" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+  kong-migrations:
+    image: kong:latest
 
-volumes:
-  kong-db:
+    command: kong migrations bootstrap
+    depends_on:
+      kong-database:
+        condition: service_healthy
+    environment:
+      <<: *common-env
+    secrets:
+      - kong_db_password
+    networks:
+      - default
+    profiles:
+        - donotstart
+        - database
+
+  kong-migrations-up:
+    image: kong:latest
+    command: kong migrations up && kong migrations finish
+    depends_on:
+      kong-database:
+        condition: service_healthy
+      kong-migrations:
+        condition: service_started
+    environment:
+      <<: *common-env
+    secrets:
+      - kong_db_password
+    networks:
+      - default
+    profiles:
+        - donotstart
+        - database
+    

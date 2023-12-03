@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { Box, Center, Text } from '@chakra-ui/react';
-import { motion, useCycle } from 'framer-motion';
+import { useEffect } from "react";
+import { Box, Center, Text } from "@chakra-ui/react";
+import { motion, useCycle } from "framer-motion";
 
 const MotionBox = motion(Box);
 
@@ -31,7 +31,7 @@ const AnimatedLoader = () => {
       initial={{ scale: 1, y: 0 }}
       animate={{ scale: scale, y: y }}
       exit={{ scale: 0 }}
-      transition={{ type: 'tween', duration: 0.5 }}
+      transition={{ type: "tween", duration: 0.5 }}
     >
       <motion.svg
         width="130%"
@@ -43,9 +43,9 @@ const AnimatedLoader = () => {
         animate={{ opacity: 1 }}
         transition={{ yoyo: Infinity, duration: 0.8 }}
         style={{
-          position: 'absolute',
-          top: '-5px',
-          left: '-21px',
+          position: "absolute",
+          top: "-5px",
+          left: "-21px",
         }}
       >
         {/* Hand-drawn irregular circle */}
