@@ -20,20 +20,28 @@ jobs:
 
     - name: Install dependencies in authentication directory
       run: |
+        ls
+        cd ../
         cd authentication
         npm install
 
     - name: Run lint:fix in authentication directory
       run: |
+        ls
+        cd ../
         cd authentication
         npm run lint:fix
 
     - name: Install dependencies in frontend directory
       run: |
+        ls
+        cd ../
         cd frontend
         npm install
 
     - name: Run lint:fix in frontend directory
       run: |
+        ls
+        cd ../
         cd frontend
         npm run lint:fix
