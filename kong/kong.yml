@@ -65,3 +65,14 @@ plugins:
     config: 
       minute: 100
       policy: local
+
+  - name: authn-kong
+    config:
+      jwt_secret: "KUKUBIRDAIDHAIDHAJKSDAJIDBQIheh09u2jeqinwdjnbqwsdifhnw0euq2e0nqwdo" 
+      refresh_endpoint: "http://auth-service/refresh" 
+      unauthenticated_endpoints:
+        - "/one" 
+        - "/two" 
+        - "/auth/google/callback"
+        - "/refresh"
+        - "logout"

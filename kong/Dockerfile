@@ -1,9 +1,12 @@
-FROM kong/kong-gateway:latest
+FROM kong:latest
+
 USER root
 
-# ENV KONG_PLUGINS=authn-kong
+RUN apt-get update && apt-get install -y lua5.4 lua5.4-dev luarocks
 
-COPY kong.yml /
-# COPY ./authn-kong /usr/local/share/lua/5.1/kong/plugins/authn-kong
+RUN luarocks install lua-resty-jwt
+RUN luarocks install lua-cjson
+RUN luarocks install lua-resty-http
+RUN luarocks install lua-resty-cookie
 
 USER kong

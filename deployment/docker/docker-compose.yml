@@ -26,10 +26,11 @@ volumes:
 services:
   kong-gateway:
     image: kong:latest
+    build: ../../kong
     environment:
       <<: *common-env
       KONG_DATABASE: off
-      # KONG_PLUGINS: authn-kong
+      KONG_PLUGINS: bundled,authn-kong
       KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml 
     ports:
       - "8000:8000" # Proxy
@@ -46,8 +47,7 @@ services:
     restart: on-failure
     volumes:
       - ../../kong/kong.yml:/etc/kong/kong.yml 
-
-
+      - ../../kong/authn-kong:/usr/local/share/lua/5.1/kong/plugins/authn-kong 
 
   kong-database:
     image: postgres:latest
@@ -94,23 +94,23 @@ services:
     secrets:
       - redis_password
 
-  service-one:
-    build: ../../downstream-services/service-one
-    image: service-one:1.0
-    depends_on:
-      - kong-gateway
+  # service-one:
+  #   build: ../../downstream-services/service-one
+  #   image: service-one:1.0
+  #   depends_on:
+  #     - kong-gateway
 
-  service-two:
-    build: ../../downstream-services/service-two
-    image: service-two:1.0
-    depends_on:
-      - kong-gateway
+  # service-two:
+  #   build: ../../downstream-services/service-two
+  #   image: service-two:1.0
+  #   depends_on:
+  #     - kong-gateway
   
-  service-three:
-    build: ../../downstream-services/service-three
-    image: service-three:1.0
-    depends_on:
-      - kong-gateway
+  # service-three:
+  #   build: ../../downstream-services/service-three
+  #   image: service-three:1.0
+  #   depends_on:
+  #     - kong-gateway
 
   auth-service:
     build: ../../authentication
