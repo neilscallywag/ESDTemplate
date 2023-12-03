@@ -3,6 +3,27 @@ _format_version: "2.1"
 services:
   - name: auth-service
     url: http://auth-service
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - http://localhost:8080
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - PATCH
+            - OPTIONS
+          headers:
+            - Accept
+            - Authorization
+            - Content-Type
+            - X-Requested-With
+          credentials: true
+          preflight_continue: false
+          exposed_headers:
+            - Authorization
     routes:
       - name: google-auth-callback
         paths:
@@ -12,7 +33,7 @@ services:
           - /auth/logout
       - name: auth-refresh-token
         paths:
-          - /auth/refresh
+          - /auth/refreshToken
 
   - name: service-one
     url: http://service-one
