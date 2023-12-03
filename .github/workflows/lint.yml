@@ -16,31 +16,16 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '14'  
+        node-version: '14'
 
-    - name: Install dependencies in authentication directory
+    - name: Install and Run lint:fix in authentication directory
+      working-directory: ./authentication
       run: |
-        ls
-        cd authentication
-        ls
         npm install
-
-    - name: Run lint:fix in authentication directory
-      run: |
-        ls
-        cd authentication
         npm run lint:fix
 
-    - name: Install dependencies in frontend directory
+    - name: Install and Run lint:fix in frontend directory
+      working-directory: ./frontend
       run: |
-        ls
-        cd ../
-        cd frontend
         npm install
-
-    - name: Run lint:fix in frontend directory
-      run: |
-        ls
-        cd ../
-        cd frontend
         npm run lint:fix
