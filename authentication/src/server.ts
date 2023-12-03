@@ -1,11 +1,12 @@
+import { corsOptions } from './config/corsOptions';
+import logger from './logging/logger';
+import authRoute from './routes/auth.routes';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import { config } from 'dotenv';
 import * as express from 'express';
 
-import { corsOptions } from './config/corsOptions';
-import logger from './logging/logger';
-import authRoute from './routes/auth.routes';
+
 
 // Debugging: Check if the .env file is being loaded
 const result = config();
