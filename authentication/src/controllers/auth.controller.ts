@@ -9,6 +9,7 @@ class AuthController {
   constructor() {
     this.authService = new AuthService();
     this.handleGoogleCallback = this.handleGoogleCallback.bind(this);
+    this.handleRefreshToken = this.handleRefreshToken.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
   }
 
@@ -69,7 +70,7 @@ class AuthController {
   }
 
   async handleRefreshToken(req: Request, res: Response) {
-    const refreshToken = req.cookies['refresh_token'];
+    const refreshToken: string = req.cookies['refresh_token'];
 
     if (!refreshToken) {
       logger.info(
