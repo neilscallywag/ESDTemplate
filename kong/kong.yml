@@ -12,7 +12,7 @@ services:
           - /auth/logout
       - name: auth-refresh-token
         paths:
-          - /auth/refreshToken
+          - /auth/refresh
 
   - name: service-one
     url: http://service-one

@@ -1,7 +1,7 @@
 import * as cors from 'cors';
 
 const development: cors.CorsOptions = {
-  origin: ['http://localhost:8080'],
+  origin: ['http://localhost:8080', 'http://localhost:8000'],
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
