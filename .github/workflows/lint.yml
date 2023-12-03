@@ -18,16 +18,22 @@ jobs:
       with:
         node-version: '14'  
 
-    - name: Install dependencies
+    - name: Install dependencies in authentication directory
       run: |
         cd authentication
         npm install
-        cd ../frontend
-        npm install
 
-    - name: Run lint:fix
+    - name: Run lint:fix in authentication directory
       run: |
         cd authentication
         npm run lint:fix
-        cd ../frontend
+
+    - name: Install dependencies in frontend directory
+      run: |
+        cd frontend
+        npm install
+
+    - name: Run lint:fix in frontend directory
+      run: |
+        cd frontend
         npm run lint:fix
