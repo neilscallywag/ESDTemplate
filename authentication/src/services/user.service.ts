@@ -1,31 +1,21 @@
 import { randomBytes } from 'crypto';
 import { Repository } from 'typeorm';
 
-import { User, UserAuth, UserDevice, UserLocation, UserRole } from '../entity';
+import {
+  Role,
+  User,
+  UserAuth,
+  UserData,
+  UserDevice,
+  UserDeviceData,
+  UserLocation,
+  UserLocationData,
+  UserRole,
+} from '../entity';
 
 import { DatabaseService } from './typeorm.service';
 
 // Define types for user data
-interface UserData {
-  name: string;
-  email: string;
-  googleAccessKey?: string;
-}
-
-interface UserDeviceData {
-  ipAddress: string;
-  userAgent: string;
-  deviceType: string;
-}
-
-interface UserLocationData {
-  geolocation: string;
-}
-
-enum Role {
-  USER = 'user',
-  ADMIN = 'admin',
-}
 
 class UserService {
   private userRepo: Repository<User>;

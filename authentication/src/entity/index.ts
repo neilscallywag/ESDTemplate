@@ -1,5 +1,5 @@
 export { User } from './User';
-export { UserAuth } from './UserAuth';
-export { UserDevice } from './UserDevice';
-export { UserLocation } from './UserLocation';
-export { UserRole } from './UserRole';
+export { UserAuth, UserData } from './UserAuth';
+export { UserDevice, UserDeviceData } from './UserDevice';
+export { UserLocation, UserLocationData } from './UserLocation';
+export { Role, UserRole } from './UserRole';

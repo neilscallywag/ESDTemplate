@@ -83,8 +83,15 @@ class AuthService {
         );
         logger.info(`User ${user.id} created.`);
 
-        const { token: refreshToken, cookieOptions: refreshCookieOptions, uniqueId: uniqueId } =
-          this.jwtHandler.createToken(user.id, JWTHandler.generateUniqueIdentifier(), TokenType.Refresh );
+        const {
+          token: refreshToken,
+          cookieOptions: refreshCookieOptions,
+          uniqueId: uniqueId,
+        } = this.jwtHandler.createToken(
+          user.id,
+          JWTHandler.generateUniqueIdentifier(),
+          TokenType.Refresh,
+        );
 
         const { token: accessToken, cookieOptions: accessCookieOptions } =
           this.jwtHandler.createToken(user.id, uniqueId, TokenType.Access);
@@ -132,7 +139,9 @@ class AuthService {
     try {
       const decoded = this.jwtHandler.verifyToken(refreshToken);
 
-      const userId = await this.redisService.get(`refreshToken:${refreshToken}`);
+      const userId = await this.redisService.get(
+        `refreshToken:${refreshToken}`,
+      );
 
       if (!userId || decoded.userId != userId) {
         throw new Error('Refresh token is invalid');
@@ -152,7 +161,9 @@ class AuthService {
 
   async handleLogout(refreshToken: string) {
     try {
-      const result = await this.redisService.remove(`refreshToken:${refreshToken}`);
+      const result = await this.redisService.remove(
+        `refreshToken:${refreshToken}`,
+      );
       if (result === 0) {
         throw new Error('Refresh token is invalid');
       }

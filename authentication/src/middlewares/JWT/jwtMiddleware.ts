@@ -55,17 +55,29 @@ class JWTHandler {
         case TokenType.Refresh:
           expiration = this.refreshExp;
           cookieOptions = refreshCookieOptions;
-          payload = { userId: userId, uniqueId: uniqueId, ...(claims as RefreshClaims) };
+          payload = {
+            userId: userId,
+            uniqueId: uniqueId,
+            ...(claims as RefreshClaims),
+          };
           break;
         case TokenType.Access:
           expiration = this.accessExp;
           cookieOptions = accessCookieOptions;
-          payload = { userId: userId, uniqueId: uniqueId, ...(claims as AccessClaims) };
+          payload = {
+            userId: userId,
+            uniqueId: uniqueId,
+            ...(claims as AccessClaims),
+          };
           break;
         case TokenType.Identity:
           expiration = this.identityExp;
           cookieOptions = identityCookieOptions;
-          payload = { userId: userId, uniqueId: uniqueId, ...(claims as IdentityClaims) };
+          payload = {
+            userId: userId,
+            uniqueId: uniqueId,
+            ...(claims as IdentityClaims),
+          };
           break;
         default:
           throw new Error('Invalid token type');

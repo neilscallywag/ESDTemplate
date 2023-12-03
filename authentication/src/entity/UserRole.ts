@@ -6,9 +6,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { User } from './User';
+import { User } from './index';
 
-enum Role {
+export enum Role {
   USER = 'user',
   ADMIN = 'admin',
 }

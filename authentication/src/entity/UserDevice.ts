@@ -8,6 +8,12 @@ import {
 
 import { User } from './User';
 
+export interface UserDeviceData {
+  ipAddress: string;
+  userAgent: string;
+  deviceType: string;
+}
+
 @Entity()
 export class UserDevice {
   @PrimaryGeneratedColumn('uuid')

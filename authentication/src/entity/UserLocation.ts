@@ -8,6 +8,10 @@ import {
 
 import { User } from './User';
 
+export interface UserLocationData {
+  geolocation: string;
+}
+
 @Entity()
 export class UserLocation {
   @PrimaryGeneratedColumn('uuid')
