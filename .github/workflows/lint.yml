@@ -22,6 +22,7 @@ jobs:
       run: |
         ls
         cd authentication
+        ls
         npm install
 
     - name: Run lint:fix in authentication directory
