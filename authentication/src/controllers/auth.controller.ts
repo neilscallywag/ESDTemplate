@@ -70,7 +70,7 @@ class AuthController {
   }
 
   async handleRefreshToken(req: Request, res: Response) {
-    const refreshToken: string = req.cookies['refresh_token'];
+    const refreshToken: string = req.body.refresh_token
 
     if (!refreshToken) {
       logger.info(
@@ -101,10 +101,10 @@ class AuthController {
   }
 
   async handleLogout(req: Request, res: Response) {
-    const refreshToken = req.cookies['refresh_token'];
+    const refresh_token = req.cookies[process.env.REFRESH_COOKIE_NAME];
 
     try {
-      if (!refreshToken) {
+      if (!refresh_token) {
         logger.info(
           'incoming request for refresh token did not have a refresh token\n' +
             req.body,
@@ -112,7 +112,7 @@ class AuthController {
         return res.status(400).json({ error: 'Refresh token is missing' });
       }
 
-      await this.authService.handleLogout(refreshToken);
+      await this.authService.handleLogout(refresh_token);
 
       res.clearCookie(process.env.ACCESS_COOKIE_NAME || 'access_token', {
         path: '/',
