@@ -28,6 +28,7 @@ interface AuthContextType {
   userEmail: string | undefined;
   userName: string | undefined;
   googleAuth: () => void;
+  checkRefreshToken: () => void;
   logout: () => void;
 }
 
@@ -147,6 +148,15 @@ const useProvideAuth = (): AuthContextType => {
     }
   };
 
+  const checkRefreshToken = async (): Promise<void> => {
+    try {
+      const response = await api.get("/one/ping");
+      console.log("success")
+    } catch (error) {
+      // console.error('Failed to check session status:', error);
+    }
+  };
+
   const googleLogout = useCallback((): void => {
     setIsAuthenticated(undefined);
     setWhoAmI(undefined);
@@ -180,6 +190,7 @@ const useProvideAuth = (): AuthContextType => {
     userEmail,
     userName,
     googleAuth,
+    checkRefreshToken,
     logout,
   };
 };

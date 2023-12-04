@@ -3,7 +3,7 @@ import { Box, Button, Heading, Text } from "@chakra-ui/react";
 import { useAuth } from "~auth/AuthContext";
 
 const Dashboard = () => {
-  const { userName, userEmail, userRole, logout } = useAuth();
+  const { userName, userEmail, userRole, checkRefreshToken, logout } = useAuth();
 
   return (
     <Box p={4}>
@@ -15,6 +15,9 @@ const Dashboard = () => {
       <Text>{userEmail}</Text>
       <Text>{userRole}</Text>
       <Text>To add more info edit authcontext</Text>
+      <Button onClick={checkRefreshToken} colorScheme="green" mt={4}>
+        Check refresh token
+      </Button>
       <Button onClick={logout} colorScheme="red" mt={4}>
         Logout
       </Button>
