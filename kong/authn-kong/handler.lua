@@ -25,10 +25,11 @@ local function validateAccessToken(token, jwt_secret)
     local validated_token = jwt:verify(jwt_secret, token)
 
     if validated_token.verified then
-        return true, validated_token.payload
+        return true, validated_token.payload, false
     else
+        local is_expired = validated_token.reason == "jwt expired"
         kong.log.err("JWT validation failed: ", validated_token.reason)
-        return false, nil
+        return false, nil, is_expired
     end
 end
 
@@ -85,17 +86,19 @@ function MyAuthHandler:access(conf)
         return kong.response.exit(401, "No access token provided")
     end
 
-    local isValid, claims = validateAccessToken(accessToken, conf.jwt_secret)
+    local isValid, claims, is_expired = validateAccessToken(accessToken, conf.jwt_secret)
 
     if isValid then
         forwardClaimsAsHeaders(claims)
-    else
+    elseif is_expired then
         local newAccessToken = refreshAccessToken(refreshToken, conf.refresh_endpoint)
         if newAccessToken then
             forwardClaimsAsHeaders(newAccessToken.claims)
         else
             return kong.response.exit(401, "Invalid Tokens")
         end
+    else
+        return kong.response.exit(401, "Invalid access tokens")
     end
 end
 
