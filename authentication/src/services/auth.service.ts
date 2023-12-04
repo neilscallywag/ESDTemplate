@@ -148,7 +148,11 @@ class AuthService {
       }
 
       const { token: accessToken, cookieOptions: accessCookieOptions } =
-        this.jwtHandler.createToken(decoded.userId, decoded.uniqueId, TokenType.Access);
+        this.jwtHandler.createToken(
+          decoded.userId,
+          decoded.uniqueId,
+          TokenType.Access,
+        );
 
       return {
         accessToken,

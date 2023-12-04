@@ -1,12 +1,10 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# Navigate to 'authentication' and run lint fix
 cd authentication
 npm run lint:fix
 cd ..
 
-# Navigate to 'frontend' and run lint fix
 cd frontend
 npm run lint:fix
 cd ..

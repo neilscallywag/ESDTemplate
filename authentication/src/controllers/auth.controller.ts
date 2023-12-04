@@ -70,7 +70,7 @@ class AuthController {
   }
 
   async handleRefreshToken(req: Request, res: Response) {
-    const refreshToken: string = req.body.refresh_token
+    const refreshToken: string = req.body.refresh_token;
 
     if (!refreshToken) {
       logger.info(

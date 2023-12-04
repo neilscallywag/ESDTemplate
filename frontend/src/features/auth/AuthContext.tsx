@@ -4,11 +4,6 @@ import React, {
   useContext,
   useEffect,
 } from "react";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@chakra-ui/react";
-import { useGoogleLogin } from "@react-oauth/google";
-import { AxiosError } from "axios";
-
 import {
   GOOGLE_AUTH_KEY,
   USER_EMAIL,
@@ -16,6 +11,10 @@ import {
   USER_ROLE,
   WHO_AM_I,
 } from "~constants/auth";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@chakra-ui/react";
+import { useGoogleLogin } from "@react-oauth/google";
+import { AxiosError } from "axios";
 
 import { useLocalStorage } from "./UseLocalStorage";
 
@@ -157,7 +156,7 @@ const useProvideAuth = (): AuthContextType => {
       const response = await api.get("/one/ping");
       console.log(response.data.message);
     } catch (error) {
-      createErrorHandler(toast)(error as AxiosError<unknown, any>); 
+      createErrorHandler(toast)(error as AxiosError<unknown, any>);
     }
   };
 
@@ -210,7 +209,7 @@ const useProvideAuth = (): AuthContextType => {
 
   const logout = async (): Promise<void> => {
     try {
-      const response = await api.post('/auth/logout');
+      const response = await api.post("/auth/logout");
       if (response.status === 200 && isAuthenticated) {
         googleLogout();
       }
@@ -218,8 +217,6 @@ const useProvideAuth = (): AuthContextType => {
       createErrorHandler(toast)(error as AxiosError<unknown, any>);
     }
   };
-  
-  
 
   useEffect(() => {
     checkSessionStatus();
