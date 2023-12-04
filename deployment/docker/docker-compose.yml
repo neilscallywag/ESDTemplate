@@ -94,23 +94,29 @@ services:
     secrets:
       - redis_password
 
-  # service-one:
-  #   build: ../../downstream-services/service-one
-  #   image: service-one:1.0
-  #   depends_on:
-  #     - kong-gateway
+  service-one:
+    build: ../../downstream-services/service-one
+    image: service-one:1.0
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      kong-gateway:
+      # remember to change this to healthy. Currently is unhealthy
+        condition: service_started 
+      cache-service:
+        condition: service_healthy
 
-  # service-two:
-  #   build: ../../downstream-services/service-two
-  #   image: service-two:1.0
-  #   depends_on:
-  #     - kong-gateway
+  service-two:
+    build: ../../downstream-services/service-two
+    image: service-two:1.0
+    depends_on:
+      - kong-gateway
   
-  # service-three:
-  #   build: ../../downstream-services/service-three
-  #   image: service-three:1.0
-  #   depends_on:
-  #     - kong-gateway
+  service-three:
+    build: ../../downstream-services/service-three
+    image: service-three:1.0
+    depends_on:
+      - kong-gateway
 
   auth-service:
     build: ../../authentication
