@@ -12,4 +12,4 @@ def echo():
     return jsonify({"received at service one": data}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8081)
+    app.run(debug=True, port=80)
