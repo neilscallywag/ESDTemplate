@@ -1,5 +1,6 @@
 -- Required libraries
 local jwt = require "resty.jwt"
+local validators = require "resty.jwt-validators"
 local cjson = require "cjson.safe"
 local http = require "resty.http"
 local ck = require "resty.cookie"
@@ -8,6 +9,11 @@ local ck = require "resty.cookie"
 local MyAuthHandler = {
     PRIORITY = 1000,
     VERSION = "1.0",
+}
+
+-- Setup the expiration validator
+local claim_spec = {
+    exp = validators.is_not_expired()
 }
 
 -- Function to check if the endpoint is unauthenticated
@@ -22,12 +28,12 @@ end
 
 -- Function to validate the access token
 local function validateAccessToken(token, jwt_secret)
-    local validated_token = jwt:verify(jwt_secret, token)
+    local validated_token = jwt:verify(jwt_secret, token, claim_spec)
 
     if validated_token.verified then
         return true, validated_token.payload, false
     else
-        local is_expired = validated_token.reason == "jwt expired"
+        local is_expired = validated_token.reason and string.find(validated_token.reason, "exp") ~= nil
         kong.log.err("JWT validation failed: ", validated_token.reason)
         return false, nil, is_expired
     end
