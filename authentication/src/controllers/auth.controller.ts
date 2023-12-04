@@ -101,7 +101,7 @@ class AuthController {
   }
 
   async handleLogout(req: Request, res: Response) {
-    const refresh_token = req.cookies[process.env.REFRESH_COOKIE_NAME];
+    const refresh_token = req.cookies['refresh_token'];
 
     try {
       if (!refresh_token) {

@@ -26,21 +26,30 @@ local function isUnauthenticatedEndpoint(path, unauthenticated_endpoints)
     return false
 end
 
+-- Function to verify and decode the token
+local function verifyToken(jwt_secret, token)
+    local verified_token = jwt:verify(jwt_secret, token, claim_spec)
+    return verified_token
+end
+
 -- Function to validate the access token
 local function validateAccessToken(token, jwt_secret)
-    local validated_token = jwt:verify(jwt_secret, token, claim_spec)
+    local validated_token = verifyToken(jwt_secret, token)
 
     if validated_token.verified then
         return true, validated_token.payload, false
     else
-        local is_expired = validated_token.reason and string.find(validated_token.reason, "exp") ~= nil
-        kong.log.err("JWT validation failed: ", validated_token.reason)
-        return false, nil, is_expired
+        local is_expired = validated_token.reason and string.find(validated_token.reason, "expired") ~= nil
+        kong.log.notice("is_expired: ", is_expired)
+        return false, nil, is_expired;
     end
 end
 
 -- Function to forward claims as headers
 local function forwardClaimsAsHeaders(claims)
+    if not claims then
+        return
+    end
     for k, v in pairs(claims) do
         kong.service.request.set_header("X-Claim-" .. k, v)
     end
@@ -48,6 +57,7 @@ end
 
 -- Function to refresh the access token
 local function refreshAccessToken(refreshToken, refresh_endpoint)
+    kong.log.notice("Refreshing access token")
     local httpClient = http.new()
     httpClient:set_timeout(5000)
 
@@ -57,6 +67,9 @@ local function refreshAccessToken(refreshToken, refresh_endpoint)
         body = cjson.encode({ refresh_token = refreshToken }),
     })
 
+    kong.log.notice("Response from refresh endpoint: ", res.body)
+    kong.log.notice("Error from refresh endpoint: ", err)
+    
     if not res then
         kong.log.err("failed to request: ", err)
         return nil
@@ -99,7 +112,8 @@ function MyAuthHandler:access(conf)
     elseif is_expired then
         local newAccessToken = refreshAccessToken(refreshToken, conf.refresh_endpoint)
         if newAccessToken then
-            forwardClaimsAsHeaders(newAccessToken.claims)
+            local verifiedToken = verifyToken(newAccessToken, conf.jwt_secret)
+            forwardClaimsAsHeaders(newAccessToken.payload)
         else
             return kong.response.exit(401, "Invalid Tokens")
         end
