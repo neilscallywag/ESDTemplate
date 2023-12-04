@@ -28,7 +28,11 @@ interface AuthContextType {
   userEmail: string | undefined;
   userName: string | undefined;
   googleAuth: () => void;
-  checkRefreshToken: () => void;
+  checkServiceOne: () => void;
+  checkServiceTwo: () => void;
+  checkServiceThree: () => void;
+  checkUnknownEndpoint: () => void;
+  checkUnknownService: () => void;
   logout: () => void;
 }
 
@@ -148,12 +152,50 @@ const useProvideAuth = (): AuthContextType => {
     }
   };
 
-  const checkRefreshToken = async (): Promise<void> => {
+  const checkServiceOne = async (): Promise<void> => {
     try {
       const response = await api.get("/one/ping");
-      console.log("success")
+      console.log(response.data.message);
     } catch (error) {
-      // console.error('Failed to check session status:', error);
+      createErrorHandler(toast)(error as AxiosError<unknown, any>); 
+    }
+  };
+
+  const checkServiceTwo = async (): Promise<void> => {
+    try {
+      const response = await api.get("/two/ping");
+      console.log(response.data.message);
+    } catch (error) {
+      createErrorHandler(toast)(error as AxiosError<unknown, any>);
+    }
+  };
+
+  const checkServiceThree = async (): Promise<void> => {
+    try {
+      const response = await api.get("/three/ping");
+      console.log(response.data);
+    } catch (error) {
+      createErrorHandler(toast)(error as AxiosError<unknown, any>);
+    }
+  };
+
+  const checkUnknownEndpoint = async (): Promise<void> => {
+    try {
+      const response = await api.get("/three/idiot");
+    } catch (error) {
+      if ((error as { status: number }).status === 404) {
+        createErrorHandler(toast)(error as AxiosError<unknown, any>);
+      }
+    }
+  };
+
+  const checkUnknownService = async (): Promise<void> => {
+    try {
+      const response = await api.get("/idiot");
+    } catch (error) {
+      if ((error as { status: number }).status === 404) {
+        createErrorHandler(toast)(error as AxiosError<unknown, any>);
+      }
     }
   };
 
@@ -190,7 +232,11 @@ const useProvideAuth = (): AuthContextType => {
     userEmail,
     userName,
     googleAuth,
-    checkRefreshToken,
+    checkServiceOne,
+    checkServiceTwo,
+    checkServiceThree,
+    checkUnknownEndpoint,
+    checkUnknownService,
     logout,
   };
 };
