@@ -12,7 +12,7 @@ import RedisService from './redis.service';
 import { DatabaseService } from './typeorm.service';
 import { UserService } from './user.service';
 
-class AuthService {
+export class AuthService {
   private jwtHandler: JWTHandler;
   // in the most technical of sense this should not take in a specific service but
   // should follow a dependency injection pattern where any service can be injected with its methods
