@@ -1,3 +1,9 @@
+- [Enterprise Solution Development IS213 template files to quickly create a new project](#enterprise-solution-development-is213-template-files-to-quickly-create-a-new-project)
+  - [Folder Structure](#folder-structure)
+  - [Commit Hooks](#commit-hooks)
+  - [Miscellaneous](#miscellaneous)
+    - [Makefile](#makefile)
+
 # Enterprise Solution Development IS213 template files to quickly create a new project
 ## Folder Structure
 
