@@ -25,8 +25,13 @@
 6. **Makefile:**
    - Makefile for running various project-related tasks.
 
-# Commit Hooks
+## Commit Hooks
 Husky is used in tandem with:
 
 lint-staged to ensure files are linted on commit
 commitlint to ensure commits adhere to convention on push
+
+
+## Miscellaneous
+### Makefile
+Refer to the [`/docs/Makefile.md`](/docs/Makefile.md) which provides instructions on how to install Makefile on both Windows and Ubuntu.
