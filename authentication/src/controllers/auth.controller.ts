@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import logger from '../logging/logger';
+import { TokenCreationResult } from '../middlewares/JWT/interfaces';
 import AuthService from '../services/auth.service';
 
 class AuthController {
@@ -81,7 +82,10 @@ class AuthController {
     }
 
     try {
-      const { accessToken, accessCookieOptions } =
+      const {
+        token: accessToken,
+        cookieOptions: accessCookieOptions,
+      }: TokenCreationResult =
         await this.authService.handleRenewToken(refreshToken);
 
       const accessCookieName = process.env.ACCESS_COOKIE_NAME || 'access_token';
