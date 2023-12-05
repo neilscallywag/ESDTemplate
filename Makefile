@@ -1,16 +1,19 @@
 PROJECT_NAME = "esd"
 LOCAL_DEPLOY_DIR = "deployment/docker"
 
+npm-install:
+	@echo "Running npm install to set up Husky and other dependencies..."
+	@npm install
 
 # ---------------------------------------
 # For deploying docker containers locally
 # ---------------------------------------
-up:
+up: npm-install
 	@docker compose -p ${PROJECT_NAME} \
 		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
 		up --build -d --remove-orphans
 
-kong-migrations:
+kong-migrations: npm-install
 	@docker compose -p ${PROJECT_NAME} \
 		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
 		up kong-migrations 
@@ -28,8 +31,7 @@ down-clean:
 		down --volumes --remove-orphans
 	@docker system prune -f
 
-
-nobuild/up:
+nobuild/up: npm-install
 	@docker-compose -p ${PROJECT_NAME} \
 		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
 		up -d
