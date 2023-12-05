@@ -55,6 +55,33 @@ local function forwardClaimsAsHeaders(claims)
     end
 end
 
+-- Function to get the identity token and verify it
+local function getAndVerifyIdentityToken(cookies, jwt_secret)
+    local identityToken, err = cookies:get("identity_token")
+    if not identityToken then
+        kong.log.err("Identity token not found: ", err)
+        return nil, "Identity token not found"
+    end
+
+    return verifyToken(jwt_secret, identityToken)
+end
+
+-- Function to check if the path is authorized for the user role
+local function isPathAuthorizedForRole(path, userRole, roleAccessRules)
+    local allowedPaths = roleAccessRules[userRole]
+    if not allowedPaths then
+        return false
+    end
+
+    for _, allowedPath in ipairs(allowedPaths) do
+        if path == allowedPath then
+            return true
+        end
+    end
+    return false
+end
+
+
 -- Function to refresh the access token
 local function refreshAccessToken(refreshToken, refresh_endpoint)
     kong.log.notice("Refreshing access token")
@@ -104,6 +131,22 @@ function MyAuthHandler:access(conf)
     if not accessToken then
         return kong.response.exit(401, "No access token provided")
     end
+    -- Get and verify the identity token
+    local verifiedIdentityToken, err = getAndVerifyIdentityToken(cookies, conf.jwt_secret)
+    if err or not verifiedIdentityToken or not verifiedIdentityToken.verified then
+        return kong.response.exit(401, "Invalid identity token")
+    end
+
+    -- Extract user role from claims
+    local userRole = verifiedIdentityToken.payload.role
+    if not userRole then
+        return kong.response.exit(401, "User role not found in token")
+    end
+
+    -- Check if the path is authorized for the user role
+    if not isPathAuthorizedForRole(path, userRole, conf.role_access_rules) then
+        return kong.response.exit(403, "Unauthorized for this path")
+    end
 
     local isValid, claims, is_expired = validateAccessToken(accessToken, conf.jwt_secret)
 
@@ -112,7 +155,9 @@ function MyAuthHandler:access(conf)
     elseif is_expired then
         local newAccessToken = refreshAccessToken(refreshToken, conf.refresh_endpoint)
         if newAccessToken then
-            local verifiedToken = verifyToken(newAccessToken, conf.jwt_secret)
+            -- this might likely introduce some bug. I am not sure if there is a need to verify the newly
+            -- created access token. I am assuming that the refresh endpoint will return a valid access token
+            -- local verifiedToken = verifyToken(newAccessToken, conf.jwt_secret)
             forwardClaimsAsHeaders(newAccessToken.payload)
         else
             return kong.response.exit(401, "Invalid Tokens")

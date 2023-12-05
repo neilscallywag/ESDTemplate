@@ -75,3 +75,6 @@ plugins:
         - "/one" 
         - "/two" 
         - "/auth/google/callback"
+      role_access_rules:
+        "admin": ["/one", "/two", "/three"]
+        "user": ["/one", "/three"]
