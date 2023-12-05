@@ -5,12 +5,12 @@ import { OAuth2Client } from 'google-auth-library';
 import logger from '../logging/logger';
 import { TokenType } from '../middlewares/JWT/interfaces';
 import JWTHandler from '../middlewares/JWT/jwtMiddleware';
-import { GoogleUserInfo } from '../types';
+import { GoogleUserInfo, Role } from '../types';
 
 import { GoogleAPIService } from './googleapi.service';
 import RedisService from './redis.service';
 import { DatabaseService } from './typeorm.service';
-import { Role, UserService } from './user.service';
+import { UserService } from './user.service';
 
 class AuthService {
   private jwtHandler: JWTHandler;
@@ -28,10 +28,44 @@ class AuthService {
     this.userService = new UserService(DatabaseService);
   }
 
-  async handleGoogleLogin(code: string, req: Request) {
+  private validateEnvironmentVariables() {
     if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
       logger.error('Google Client ID or Client Secret is not defined in .env');
+      throw new Error('Missing environment variables for Google Client.');
     }
+  }
+
+  private async renewAccessToken(refreshToken: string) {
+    const decoded = this.jwtHandler.verifyToken(refreshToken);
+    const userId = await this.redisService.get(`refreshToken:${refreshToken}`);
+
+    if (!userId || decoded.userId != userId) {
+      throw new Error('Refresh token is invalid');
+    }
+
+    return this.jwtHandler.createToken(
+      decoded.userId,
+      decoded.uniqueId,
+      TokenType.Access,
+    );
+  }
+
+  private createUserDeviceParam(req: Request, useragent) {
+    return {
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
+      deviceType: useragent.isDesktop
+        ? 'Desktop'
+        : useragent.isMobile
+          ? 'Mobile'
+          : useragent.isTablet
+            ? 'Tablet'
+            : 'Unknown',
+    };
+  }
+
+  async handleGoogleLogin(code: string, req: Request) {
+    this.validateEnvironmentVariables();
 
     const oAuth2Client = new OAuth2Client(
       process.env.GOOGLE_CLIENT_ID,
@@ -56,17 +90,7 @@ class AuthService {
         googleRefreshToken: userAuth.refresh_token,
       };
 
-      const userDeviceParam = {
-        ipAddress: req.ip,
-        userAgent: req.headers['user-agent'],
-        deviceType: useragent.isDesktop
-          ? 'Desktop'
-          : useragent.isMobile
-            ? 'Mobile'
-            : useragent.isTablet
-              ? 'Tablet'
-              : 'Unknown',
-      };
+      const userDeviceParam = this.createUserDeviceParam(req, useragent);
 
       const userLocationParam = {
         geolocation: '',
@@ -136,31 +160,7 @@ class AuthService {
   }
 
   async handleRenewToken(refreshToken: string) {
-    try {
-      const decoded = this.jwtHandler.verifyToken(refreshToken);
-
-      const userId = await this.redisService.get(
-        `refreshToken:${refreshToken}`,
-      );
-
-      if (!userId || decoded.userId != userId) {
-        throw new Error('Refresh token is invalid');
-      }
-
-      const { token: accessToken, cookieOptions: accessCookieOptions } =
-        this.jwtHandler.createToken(
-          decoded.userId,
-          decoded.uniqueId,
-          TokenType.Access,
-        );
-
-      return {
-        accessToken,
-        accessCookieOptions,
-      };
-    } catch (error) {
-      throw new Error(String(error));
-    }
+    return await this.renewAccessToken(refreshToken);
   }
 
   async handleLogout(refreshToken: string) {
