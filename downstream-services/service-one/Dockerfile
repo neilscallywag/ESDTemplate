@@ -10,7 +10,7 @@ COPY . /app
 # Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
 
-EXPOSE 8081
+EXPOSE 80
 
 # Define environment variable
 ENV NAME World

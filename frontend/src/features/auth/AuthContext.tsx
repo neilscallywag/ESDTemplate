@@ -28,6 +28,11 @@ interface AuthContextType {
   userEmail: string | undefined;
   userName: string | undefined;
   googleAuth: () => void;
+  checkServiceOne: () => void;
+  checkServiceTwo: () => void;
+  checkServiceThree: () => void;
+  checkUnknownEndpoint: () => void;
+  checkUnknownService: () => void;
   logout: () => void;
 }
 
@@ -147,6 +152,53 @@ const useProvideAuth = (): AuthContextType => {
     }
   };
 
+  const checkServiceOne = async (): Promise<void> => {
+    try {
+      const response = await api.get("/one/ping");
+      console.log(response.data.message);
+    } catch (error) {
+      createErrorHandler(toast)(error as AxiosError<unknown, any>);
+    }
+  };
+
+  const checkServiceTwo = async (): Promise<void> => {
+    try {
+      const response = await api.get("/two/ping");
+      console.log(response.data.message);
+    } catch (error) {
+      createErrorHandler(toast)(error as AxiosError<unknown, any>);
+    }
+  };
+
+  const checkServiceThree = async (): Promise<void> => {
+    try {
+      const response = await api.get("/three/ping");
+      console.log(response.data);
+    } catch (error) {
+      createErrorHandler(toast)(error as AxiosError<unknown, any>);
+    }
+  };
+
+  const checkUnknownEndpoint = async (): Promise<void> => {
+    try {
+      const response = await api.get("/three/idiot");
+    } catch (error) {
+      if ((error as { status: number }).status === 404) {
+        createErrorHandler(toast)(error as AxiosError<unknown, any>);
+      }
+    }
+  };
+
+  const checkUnknownService = async (): Promise<void> => {
+    try {
+      const response = await api.get("/idiot");
+    } catch (error) {
+      if ((error as { status: number }).status === 404) {
+        createErrorHandler(toast)(error as AxiosError<unknown, any>);
+      }
+    }
+  };
+
   const googleLogout = useCallback((): void => {
     setIsAuthenticated(undefined);
     setWhoAmI(undefined);
@@ -158,7 +210,7 @@ const useProvideAuth = (): AuthContextType => {
 
   const logout = async (): Promise<void> => {
     try {
-      const response = await api.post('/auth/logout');
+      const response = await api.post("/auth/logout");
       if (response.status === 200 && isAuthenticated) {
         googleLogout();
       }
@@ -166,8 +218,6 @@ const useProvideAuth = (): AuthContextType => {
       createErrorHandler(toast)(error as AxiosError<unknown, any>);
     }
   };
-  
-  
 
   useEffect(() => {
     checkSessionStatus();
@@ -180,6 +230,11 @@ const useProvideAuth = (): AuthContextType => {
     userEmail,
     userName,
     googleAuth,
+    checkServiceOne,
+    checkServiceTwo,
+    checkServiceThree,
+    checkUnknownEndpoint,
+    checkUnknownService,
     logout,
   };
 };

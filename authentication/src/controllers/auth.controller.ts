@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import logger from '../logging/logger';
+import { TokenCreationResult } from '../middlewares/JWT/interfaces';
 import AuthService from '../services/auth.service';
 
 class AuthController {
@@ -9,6 +10,7 @@ class AuthController {
   constructor() {
     this.authService = new AuthService();
     this.handleGoogleCallback = this.handleGoogleCallback.bind(this);
+    this.handleRefreshToken = this.handleRefreshToken.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
   }
 
@@ -69,7 +71,7 @@ class AuthController {
   }
 
   async handleRefreshToken(req: Request, res: Response) {
-    const refreshToken = req.cookies['refresh_token'];
+    const refreshToken: string = req.body.refresh_token;
 
     if (!refreshToken) {
       logger.info(
@@ -80,7 +82,10 @@ class AuthController {
     }
 
     try {
-      const { accessToken, accessCookieOptions } =
+      const {
+        token: accessToken,
+        cookieOptions: accessCookieOptions,
+      }: TokenCreationResult =
         await this.authService.handleRenewToken(refreshToken);
 
       const accessCookieName = process.env.ACCESS_COOKIE_NAME || 'access_token';
@@ -100,10 +105,10 @@ class AuthController {
   }
 
   async handleLogout(req: Request, res: Response) {
-    const refreshToken = req.cookies['refresh_token'];
+    const refresh_token = req.cookies['refresh_token'];
 
     try {
-      if (!refreshToken) {
+      if (!refresh_token) {
         logger.info(
           'incoming request for refresh token did not have a refresh token\n' +
             req.body,
@@ -111,7 +116,7 @@ class AuthController {
         return res.status(400).json({ error: 'Refresh token is missing' });
       }
 
-      await this.authService.handleLogout(refreshToken);
+      await this.authService.handleLogout(refresh_token);
 
       res.clearCookie(process.env.ACCESS_COOKIE_NAME || 'access_token', {
         path: '/',

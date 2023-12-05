@@ -5,7 +5,7 @@ import logger from '../logging/logger';
 
 config();
 
-class RedisService {
+export class RedisService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private client: any;
   private host: string;

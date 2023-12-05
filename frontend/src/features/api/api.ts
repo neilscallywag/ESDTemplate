@@ -46,7 +46,7 @@ export const createErrorHandler =
     } else {
       const toastOptions: UseToastOptions = {
         title: "Error",
-        description: `Failed setting up the request: ${error.message}`,
+        description: `Failed setting up the request: ${error}`,
         status: "error",
         duration: 9000,
         isClosable: true,

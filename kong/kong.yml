@@ -68,11 +68,13 @@ plugins:
 
   - name: authn-kong
     config:
+    # Sadly kong doesn't support env vars in config
       jwt_secret: "KUKUBIRDAIDHAIDHAJKSDAJIDBQIheh09u2jeqinwdjnbqwsdifhnw0euq2e0nqwdo" 
-      refresh_endpoint: "http://auth-service/refresh" 
+      refresh_endpoint: "http://auth-service/auth/refresh" 
       unauthenticated_endpoints:
         - "/one" 
         - "/two" 
         - "/auth/google/callback"
-        - "/refresh"
-        - "logout"
+      role_access_rules:
+        "admin": ["/one", "/two", "/three"]
+        "user": ["/one", "/three"]

@@ -15,6 +15,7 @@ import {
   AccessClaims,
   IdentityClaims,
   RefreshClaims,
+  TokenCreationResult,
   TokenPayload,
   TokenType,
 } from './interfaces';
@@ -45,7 +46,7 @@ class JWTHandler {
     uniqueId: string,
     type: TokenType,
     claims?: AccessClaims | IdentityClaims | RefreshClaims,
-  ) {
+  ): TokenCreationResult {
     try {
       let expiration: string;
       let cookieOptions: CookieOptions;
