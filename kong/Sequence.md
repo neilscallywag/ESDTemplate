@@ -1,6 +1,7 @@
 participant Client
 participant Kong Gateway
 participant Authentication Service
+participant Resource Server
 
 note over Client: Request with cookies\n(access_token, refresh_token, identity_token)
 
@@ -9,6 +10,8 @@ note over Kong Gateway: Extract cookies
 
 alt Path is unauthenticated
     note over Kong Gateway: Allow request without token
+    Kong Gateway->Resource Server: Forward request
+    Resource Server->Client: Respond
 else Path requires authentication
     note over Kong Gateway: Verify access_token
     Kong Gateway->Kong Gateway: Validate Access Token
@@ -19,7 +22,9 @@ else Path requires authentication
         alt Identity Token is valid
             note over Kong Gateway: Extract user role from Identity Token
             alt Path is authorized for user role
-                Kong Gateway->Client: Forward claims as headers, Allow access
+                note over Kong Gateway: Forward claims as headers to Resource Server
+                Kong Gateway->Resource Server: Forward request with claims
+                Resource Server->Client: Respond
             else Path not authorized for user role
                 Kong Gateway->Client: 403 Unauthorized
             end
@@ -35,8 +40,9 @@ else Path requires authentication
         alt New token is valid
             note over Kong Gateway: Verify new access_token\nExtract user role
             alt Path is authorized for user role
-                note over Kong Gateway: Forward claims as headers
-                Kong Gateway->Client: Allow access with new token
+                note over Kong Gateway: Forward claims as headers to Resource Server
+                Kong Gateway->Resource Server: Forward request with new token and claims
+                Resource Server->Client: Respond
             else Path not authorized for user role
                 Kong Gateway->Client: 403 Unauthorized
             end
