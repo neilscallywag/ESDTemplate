@@ -1,0 +1,46 @@
+```mermaid
+participant Client
+participant Kong Gateway
+participant Authentication Service
+
+note over Client: Request with cookies\n(access_token, refresh_token, identity_token)
+
+Client->Kong Gateway: HTTP Request
+note over Kong Gateway: Extract cookies
+
+alt Path is unauthenticated
+    note over Kong Gateway: Allow request without token
+else Path requires authentication
+    alt access_token is valid
+        note over Kong Gateway: Verify access_token
+        Kong Gateway->Kong Gateway: Validate Identity Token
+        alt Identity Token is valid
+            note over Kong Gateway: Extract user role from Identity Token
+            alt Path is authorized for user role
+                Kong Gateway->Client: Forward claims as headers, Allow access
+            else Path not authorized for user role
+                Kong Gateway->Client: 403 Unauthorized
+            end
+        else Identity Token is invalid
+            Kong Gateway->Client: 401 Invalid identity token
+        end
+    else access_token is invalid or expired
+        note over Kong Gateway: Check refresh_token
+        Kong Gateway->Authentication Service: Request new access_token
+        Authentication Service->Kong Gateway: New access_token
+        alt New token is valid
+            note over Kong Gateway: Verify new access_token\nExtract user role
+            alt Path is authorized for user role
+                note over Kong Gateway: Forward claims as headers
+                Kong Gateway->Client: Allow access with new token
+            else Path not authorized for user role
+                Kong Gateway->Client: 403 Unauthorized
+            end
+        else New token is invalid
+            Kong Gateway->Client: 401 Invalid Tokens
+        end
+    end
+end
+
+note over Client: Processes response
+```
