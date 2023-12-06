@@ -155,12 +155,16 @@ function MyAuthHandler:access(conf)
     elseif is_expired then
         local newAccessToken = refreshAccessToken(refreshToken, conf.refresh_endpoint)
         if newAccessToken then
-            -- this might likely introduce some bug. I am not sure if there is a need to verify the newly
-            -- created access token. I am assuming that the refresh endpoint will return a valid access token
-            -- local verifiedToken = verifyToken(newAccessToken, conf.jwt_secret)
-            forwardClaimsAsHeaders(newAccessToken.payload)
+            local verifiedToken = verifyToken(newAccessToken, conf.jwt_secret)
+            forwardClaimsAsHeaders(verifiedToken.payload)
         else
-            return kong.response.exit(401, "Invalid Tokens")
+            -- I am not sure if need to make a call to /logout endpoint to clear the cookies
+            -- local res, err = httpClient:request_uri(/auth/logout, {
+            --     method = "POST",
+            --     headers = {["Content-Type"] = "application/json"},
+            --     body = cjson.encode({ refresh_token = refreshToken }),
+            -- })
+            return kong.response.exit(401, "Likely Invalid Refresh Token")
         end
     else
         return kong.response.exit(401, "Invalid access tokens")
