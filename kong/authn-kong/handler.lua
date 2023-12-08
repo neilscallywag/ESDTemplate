@@ -186,7 +186,7 @@ function MyAuthHandler:access(conf)
     end
 
     -- Extract user role from claims
-    local userRole = verifiedIdentityToken.payload.role
+    local userRole = verifiedIdentityToken.payload.userRole
     if not userRole then
         return kong.response.exit(401, "User role not found in token")
     end
@@ -206,14 +206,7 @@ function MyAuthHandler:access(conf)
             local verifiedToken = verifyToken(newAccessToken, conf.jwt_secret)
             forwardClaimsAsHeaders(verifiedToken.payload)
         else
-            -- I am not sure if need to make a call to /logout endpoint to clear the cookies
-            -- local res, err = httpClient:request_uri(/auth/logout, {
-            --     method = "POST",
-            --     headers = {["Content-Type"] = "application/json"},
-            --     body = cjson.encode({ refresh_token = refreshToken }),
-            -- })
-            -- return kong.response.exit(401, "Likely Invalid Refresh Token")
-            if logoutUser(refreshToken, conf.logout_endpoint) then
+            if logoutUser(refreshToken, conf.logout_url) then
                 return kong.response.exit(200, "Logged out successfully")
             else
                 return kong.response.exit(500, "Failed to logout user")

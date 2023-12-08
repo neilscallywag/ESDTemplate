@@ -73,10 +73,8 @@ plugins:
       refresh_url: "http://auth-service/auth/refresh"
       logout_endpoint: "/auth/logout"
       logout_url: "http://auth-service/auth/logout"
-      unauthenticated_endpoints:
-        - "/one" 
-        - "/two" 
+      unauthenticated_endpoints: 
         - "/auth/google/callback"
       role_access_rules:
-        "admin": ["/one", "/two", "/three"]
-        "user": ["/one", "/three"]
+        "admin": ["/one/ping", "/two/ping", "/three/ping"]
+        "user": ["/one/ping", "/three/ping"]
