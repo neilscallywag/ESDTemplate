@@ -1,6 +1,7 @@
 import { Request } from 'express';
 import * as expressUseragent from 'express-useragent';
 import { OAuth2Client } from 'google-auth-library';
+import { TokenExpiredError } from 'jsonwebtoken';
 
 import logger from '../logging/logger';
 import { TokenType } from '../middlewares/JWT/interfaces';
@@ -180,7 +181,11 @@ export class AuthService {
       // Add uniqueId to redis revocation list
       await this.redisService.set(decoded.uniqueId, "revoked", expiryInSec);
     } catch (error) {
-      throw new Error(String(error));
+      if (error instanceof TokenExpiredError) {
+        logger.info('Attempt to logout with an expired token');
+      } else {
+        throw new Error(String(error));
+      }
     }
   }
 }
