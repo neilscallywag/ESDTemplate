@@ -86,7 +86,7 @@ class AuthController {
         token: accessToken,
         cookieOptions: accessCookieOptions,
       }: TokenCreationResult =
-        await this.authService.handleRenewToken(refreshToken);
+        await this.authService.renewAccessToken(refreshToken);
 
       const accessCookieName = process.env.ACCESS_COOKIE_NAME || 'access_token';
       if (!process.env.ACCESS_COOKIE_NAME) {
