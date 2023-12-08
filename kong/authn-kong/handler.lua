@@ -26,6 +26,11 @@ local function isUnauthenticatedEndpoint(path, unauthenticated_endpoints)
     return false
 end
 
+-- Function to check if it is logout endpoint
+local function isLogoutEndpoint(path, logout_endpoint)
+    return path == logout_endpoint
+end
+
 -- Function to verify and decode the token
 local function verifyToken(jwt_secret, token)
     local verified_token = jwt:verify(jwt_secret, token, claim_spec)
@@ -56,8 +61,7 @@ local function forwardClaimsAsHeaders(claims)
 end
 
 -- Function to get the identity token and verify it
-local function getAndVerifyIdentityToken(cookies, jwt_secret)
-    local identityToken, err = cookies:get("identity_token")
+local function getAndVerifyIdentityToken(identityToken, jwt_secret)
     if not identityToken then
         kong.log.err("Identity token not found: ", err)
         return nil, "Identity token not found"
@@ -81,29 +85,64 @@ local function isPathAuthorizedForRole(path, userRole, roleAccessRules)
     return false
 end
 
+-- Function for making HTTP POST requests
+local function makeHttpPostRequest(endpointUrl, requestBody)
+    kong.log.notice("Making HTTP POST request to: ", endpointUrl)
 
--- Function to refresh the access token
-local function refreshAccessToken(refreshToken, refresh_endpoint)
-    kong.log.notice("Refreshing access token")
     local httpClient = http.new()
     httpClient:set_timeout(5000)
 
-    local res, err = httpClient:request_uri(refresh_endpoint, {
+    local res, err = httpClient:request_uri(endpointUrl, {
         method = "POST",
         headers = {["Content-Type"] = "application/json"},
-        body = cjson.encode({ refresh_token = refreshToken }),
+        body = cjson.encode(requestBody),
     })
 
-    kong.log.notice("Response from refresh endpoint: ", res.body)
-    kong.log.notice("Error from refresh endpoint: ", err)
-    
+    kong.log.notice("Response from endpoint: ", endpointUrl, " - ", res and res.body or "no response")
+    kong.log.notice("Error from endpoint: ", endpointUrl, " - ", err or "no error")
+
     if not res then
-        kong.log.err("failed to request: ", err)
+        kong.log.err("Failed to make request to: ", endpointUrl, " - ", err)
+        return nil, err
+    end
+
+    return res, nil
+end
+
+-- Function to logout the user
+local function logoutUser(refreshToken, logout_url)
+    kong.log.notice("Logging out user")
+    local res, err = makeHttpPostRequest(logout_url, { refresh_token = refreshToken })
+
+    if not res or res.status ~= 200 then
+        kong.log.err("Failed to logout user: ", res and res.body or "no response")
         return nil
     end
 
-    if res.status ~= 200 then
-        kong.log.err("failed to refresh token: ", res.body)
+    -- Check for Set-Cookie headers and forward them
+    local setCookieHeaders = res.headers["Set-Cookie"]
+    if setCookieHeaders then
+        if type(setCookieHeaders) == "table" then
+            -- If there are multiple Set-Cookie headers, set them individually
+            for _, cookie in ipairs(setCookieHeaders) do
+                kong.response.add_header("Set-Cookie", cookie)
+            end
+        else
+            -- If there is only one Set-Cookie header, set it directly
+            kong.response.set_header("Set-Cookie", setCookieHeaders)
+        end
+    end
+
+    return true
+end
+
+-- Function to refresh the access token
+local function refreshAccessToken(refreshToken, refresh_url)
+    kong.log.notice("Refreshing access token")
+    local res, err = makeHttpPostRequest(refresh_url, { refresh_token = refreshToken })
+
+    if not res or res.status ~= 200 then
+        kong.log.err("Failed to refresh token: ", res and res.body or "no response")
         return nil
     end
 
@@ -123,6 +162,7 @@ function MyAuthHandler:access(conf)
 
     local accessToken, err = cookies:get("access_token")
     local refreshToken, err = cookies:get("refresh_token")
+    local identityToken, err = cookies:get("identity_token")
 
     if isUnauthenticatedEndpoint(path, conf.unauthenticated_endpoints) and not accessToken then
         return
@@ -131,8 +171,16 @@ function MyAuthHandler:access(conf)
     if not accessToken then
         return kong.response.exit(401, "No access token provided")
     end
+
+    if isLogoutEndpoint(path, conf.logout_endpoint) then
+        if logoutUser(refreshToken, conf.logout_url) then
+            return kong.response.exit(200, "Logged out successfully")
+        else
+            return kong.response.exit(500, "Failed to logout user")
+        end
+    end
     -- Get and verify the identity token
-    local verifiedIdentityToken, err = getAndVerifyIdentityToken(cookies, conf.jwt_secret)
+    local verifiedIdentityToken, err = getAndVerifyIdentityToken(identityToken, conf.jwt_secret)
     if err or not verifiedIdentityToken or not verifiedIdentityToken.verified then
         return kong.response.exit(401, "Invalid identity token")
     end
@@ -153,7 +201,7 @@ function MyAuthHandler:access(conf)
     if isValid then
         forwardClaimsAsHeaders(claims)
     elseif is_expired then
-        local newAccessToken = refreshAccessToken(refreshToken, conf.refresh_endpoint)
+        local newAccessToken = refreshAccessToken(refreshToken, conf.refresh_url)
         if newAccessToken then
             local verifiedToken = verifyToken(newAccessToken, conf.jwt_secret)
             forwardClaimsAsHeaders(verifiedToken.payload)
@@ -164,7 +212,12 @@ function MyAuthHandler:access(conf)
             --     headers = {["Content-Type"] = "application/json"},
             --     body = cjson.encode({ refresh_token = refreshToken }),
             -- })
-            return kong.response.exit(401, "Likely Invalid Refresh Token")
+            -- return kong.response.exit(401, "Likely Invalid Refresh Token")
+            if logoutUser(refreshToken, conf.logout_endpoint) then
+                return kong.response.exit(200, "Logged out successfully")
+            else
+                return kong.response.exit(500, "Failed to logout user")
+            end
         end
     else
         return kong.response.exit(401, "Invalid access tokens")
