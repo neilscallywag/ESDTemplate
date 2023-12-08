@@ -36,7 +36,10 @@ export class AuthService {
     }
   }
 
-  private createUserDeviceParam(req: Request, useragent: expressUseragent.Details) {
+  private createUserDeviceParam(
+    req: Request,
+    useragent: expressUseragent.Details,
+  ) {
     return {
       ipAddress: req.ip,
       userAgent: req.headers['user-agent'],
@@ -152,6 +155,8 @@ export class AuthService {
         throw new Error('Refresh token is revoked.');
       }
 
+      // TODO: check if userId is in sql database
+
       return this.jwtHandler.createToken(
         decoded.userId,
         decoded.uniqueId,
@@ -167,19 +172,15 @@ export class AuthService {
       const decoded = this.jwtHandler.verifyToken(refreshToken);
 
       if (!decoded.exp) {
-        throw new Error("Token does not have an expiration time.");
+        logger.info('Token does not have an expiration time.');
+        throw new Error('Token does not have an expiration time.');
       }
 
       const currentTime = Math.floor(Date.now() / 1000); // time in second
       const expiryInSec = decoded.exp - currentTime;
 
-      // Check if the token is already expired
-      if (expiryInSec <= 0) {
-        throw new Error("Token is already expired.");
-      }
-
       // Add uniqueId to redis revocation list
-      await this.redisService.set(decoded.uniqueId, "revoked", expiryInSec);
+      await this.redisService.set(decoded.uniqueId, 'revoked', expiryInSec);
     } catch (error) {
       if (error instanceof TokenExpiredError) {
         logger.info('Attempt to logout with an expired token');
