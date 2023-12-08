@@ -12,6 +12,6 @@ RUN apt update && apt install curl -y
 RUN npm install
 
 # Starting our application
-CMD [ "npm", "run", "build" ]
+CMD [ "npm", "run", "dev" ]
 
 
