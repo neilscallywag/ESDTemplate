@@ -146,6 +146,20 @@ local function refreshAccessToken(refreshToken, refresh_url)
         return nil
     end
 
+    -- Check for Set-Cookie headers and forward them
+    local setCookieHeaders = res.headers["Set-Cookie"]
+    if setCookieHeaders then
+        if type(setCookieHeaders) == "table" then
+            -- If there are multiple Set-Cookie headers, set them individually
+            for _, cookie in ipairs(setCookieHeaders) do
+                kong.response.add_header("Set-Cookie", cookie)
+            end
+        else
+            -- If there is only one Set-Cookie header, set it directly
+            kong.response.set_header("Set-Cookie", setCookieHeaders)
+        end
+    end
+
     local body = cjson.decode(res.body)
     return { claims = body.newAccessToken }
 end
