@@ -1,10 +1,41 @@
 # Enterprise Solution Development IS213 template files to quickly create a new project
 - [Enterprise Solution Development IS213 template files to quickly create a new project](#enterprise-solution-development-is213-template-files-to-quickly-create-a-new-project)
+  - [TODO](#todo)
+    - [CICD](#cicd)
+    - [Architecture](#architecture)
+    - [Frontend](#frontend)
+    - [Authentication](#authentication)
   - [Folder Structure](#folder-structure)
   - [Commit Hooks](#commit-hooks)
   - [Quick Start](#quick-start)
   - [Miscellaneous](#miscellaneous)
     - [Makefile](#makefile)
+
+## TODO 
+### CICD
+
+- [ ] Cleanup local deployment using docker
+- [ ] Create a .env file populator script
+- [ ] Kubernetes cluster configuration
+- [ ] Terraform configuration
+
+### Architecture
+
+- [ ] Create pipeline to allow separation for read and write databases using Kafka, Debezium for Change Data Capture (CDC).
+- [ ] Better documentation for maintainence 
+- [ ] Mini VAPT to test security issues
+
+
+### Frontend
+- [ ] Migrate from CRA to Vite
+- [ ] Write unit tests
+- [ ] set up visual regression testing pipeline
+
+### Authentication
+- [ ] Write unit tests
+- [ ] Better logging capabilities
+
+
 
 ## Folder Structure
 
