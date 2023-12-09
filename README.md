@@ -10,7 +10,6 @@
 
 1. **authentication:**
    - Contains code related to authentication and authorization.
-   - Includes configuration files, controllers, entities, middlewares, routes, services, and types.
 
 2. **deployment:**
    - Contains deployment-related files, including Docker and Kubernetes configurations.
@@ -22,8 +21,6 @@
 
 4. **frontend:**
    - Represents the front-end portion of the project.
-   - Includes configuration files, React components, constants, features, and more.
-   - Typical structure for a web application.
 
 5. **kong:**
    - Contains code related to Kong API Gateway.
