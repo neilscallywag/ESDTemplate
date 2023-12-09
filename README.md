@@ -51,4 +51,4 @@ make up
 ```
 ## Miscellaneous
 ### Makefile
-Refer to the [`/docs/Makefile.md`](/docs/Makefile.md) which provides instructions on how to install Makefile on both Windows and Ubuntu.
+Refer to the [`/docs/Makefile.md`](/docs/Makefile.md) which provides instructions on how to install `Make` on both Windows and Ubuntu.
