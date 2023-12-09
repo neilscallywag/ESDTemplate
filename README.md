@@ -32,12 +32,13 @@
 ## Commit Hooks
 Husky is used in tandem with:
 
-lint-staged to ensure files are linted on commit
-commitlint to ensure commits adhere to convention on push
+**lint-staged** to ensure files are linted on commit
+
+**commitlint** to ensure commit messages adhere to [convention](https://www.conventionalcommits.org/en/v1.0.0/). 
 
 ## Quick Start
 
-- Run npm install to install husky and commit lints
+- Run npm install to install husky and commit lints. 
 ```bash
 npm install
 ```
