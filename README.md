@@ -69,14 +69,9 @@ Husky is used in tandem with:
 
 ## Quick Start
 
-- Run npm install to install husky and commit lints. 
-```bash
-npm install
-```
-
 - Populate all the environment variables
    
-- Run make commands to start local development using docker
+- Run make commands to start local development using docker. This command will also install the dependencies for `husky`.
 ```bash
 make up
 ```
