@@ -149,7 +149,7 @@ export class AuthService {
   async renewAccessToken(refreshToken: string) {
     try {
       const decoded = this.jwtHandler.verifyToken(refreshToken);
-      const exist = await this.redisService.get(decoded.uniqueId); // check if uniqueId is in redis revoked list
+      const exist = await this.redisService.get(`revoked:${decoded.uniqueId}`); // check if uniqueId is in redis revoked list
 
       if (exist) {
         throw new Error('Refresh token is revoked.');
@@ -180,7 +180,7 @@ export class AuthService {
       const expiryInSec = decoded.exp - currentTime;
 
       // Add uniqueId to redis revocation list
-      await this.redisService.set(decoded.uniqueId, 'revoked', expiryInSec);
+      await this.redisService.set(`revoked:${decoded.uniqueId}`, 'revoked', expiryInSec);
     } catch (error) {
       if (error instanceof TokenExpiredError) {
         logger.info('Attempt to logout with an expired token');
