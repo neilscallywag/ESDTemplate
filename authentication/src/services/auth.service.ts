@@ -180,7 +180,11 @@ export class AuthService {
       const expiryInSec = decoded.exp - currentTime;
 
       // Add uniqueId to redis revocation list
-      await this.redisService.set(`revoked:${decoded.uniqueId}`, 'revoked', expiryInSec);
+      await this.redisService.set(
+        `revoked:${decoded.uniqueId}`,
+        'revoked',
+        expiryInSec,
+      );
     } catch (error) {
       if (error instanceof TokenExpiredError) {
         logger.info('Attempt to logout with an expired token');
