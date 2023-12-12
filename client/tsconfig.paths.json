@@ -1,11 +1,10 @@
 {
-    "compilerOptions": {
-      "baseUrl": "./",
-      "paths": {
-        "~shared/*": ["./src/shared/*"],
-        "~models/*": ["./src/shared/models/*"],
-        "~features/*": ["./src/features/*"],
-      }
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "~shared/*": ["./src/shared/*"],
+      "~models/*": ["./src/shared/models/*"],
+      "~features/*": ["./src/features/*"]
     }
   }
-  
+}

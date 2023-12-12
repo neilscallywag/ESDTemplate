@@ -8,10 +8,10 @@ export default defineConfig({
     watch: {
       usePolling: true,
     },
-    host: true, 
+    host: true,
     strictPort: true,
   },
   build: {
     chunkSizeWarningLimit: 1000,
-  }
+  },
 });

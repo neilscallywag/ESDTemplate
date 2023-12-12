@@ -13,7 +13,9 @@ if (rootElement) {
     <React.StrictMode>
       <ChakraProvider>
         <GoogleOAuthProvider
-          clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || "Nothing-Ever-Works"}
+          clientId={
+            import.meta.env.VITE_GOOGLE_CLIENT_ID || "Nothing-Ever-Works"
+          }
         >
           <BrowserRouter>
             <TitleProvider>
