@@ -2,6 +2,12 @@
 # Structure
 The project directory structure is inspired by the [Hospital Run project](https://github.com/HospitalRun/hospitalrun-frontend).  
 
+# I18N configuration
+## TODO:
+- [ ] Add localstorage hook to persist the user choice
+- [ ] create a component to switch the language
+
+
 # SEO Configuration
 ## TODO:
 - [ ] Add ability to auto generate sitemap.xml

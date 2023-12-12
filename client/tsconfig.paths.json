@@ -4,7 +4,8 @@
     "paths": {
       "~shared/*": ["./src/shared/*"],
       "~models/*": ["./src/shared/models/*"],
-      "~features/*": ["./src/features/*"]
+      "~features/*": ["./src/features/*"],
+      "~locales/*": ["./src/shared/locales/*"]
     }
   }
 }
