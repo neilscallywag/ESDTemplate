@@ -1,35 +1,66 @@
 import * as React from "react";
 
-type SetTitle = (title: string) => void;
-type State = { title: string };
-type TitleProviderProps = { children: React.ReactNode };
-const TitleStateContext = React.createContext<State | undefined>(undefined);
-const TitleDispatchContext = React.createContext<SetTitle | undefined>(
-  undefined,
-);
+// Define types
+type MetaTags = {
+  description?: string;
+  keywords?: string;
+};
 
-function TitleProvider({ children }: TitleProviderProps) {
-  const [title, setTitle] = React.useState("");
+type HeadState = {
+  title: string;
+  metaTags: MetaTags;
+};
+
+type HeadContextType = {
+  state: HeadState;
+  setHead: (title: string, metaTags: MetaTags) => void;
+};
+
+// Contexts
+const HeadContext = React.createContext<HeadContextType | undefined>(undefined);
+
+// Provider Component
+const HeadProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [state, setState] = React.useState<HeadState>({
+    title: "",
+    metaTags: {},
+  });
+
+  const setHead = (title: string, metaTags: MetaTags) => {
+    setState({ title, metaTags });
+  };
+
   return (
-    <TitleStateContext.Provider value={{ title }}>
-      <TitleDispatchContext.Provider value={setTitle}>
-        {children}
-      </TitleDispatchContext.Provider>
-    </TitleStateContext.Provider>
+    <HeadContext.Provider value={{ state, setHead }}>
+      {children}
+    </HeadContext.Provider>
   );
-}
-function useTitle() {
-  const context = React.useContext(TitleStateContext);
-  if (context === undefined) {
-    throw new Error("useTitle must be used within a TitleProvider");
+};
+
+// Custom Hook for Updating Head
+function useHead(title: string, metaTags: MetaTags) {
+  const context = React.useContext(HeadContext);
+  if (!context) {
+    throw new Error("useHead must be used within a HeadProvider");
   }
-  return context;
+
+  React.useEffect(() => {
+    context.setHead(title, metaTags);
+    document.title = title;
+    // Update meta tags logic here
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute("content", metaTags.description || "");
+  }, [title, metaTags, context]);
 }
-function useUpdateTitle() {
-  const context = React.useContext(TitleDispatchContext);
-  if (context === undefined) {
-    throw new Error("useUpdateTitle must be used within a TitleProvider");
-  }
-  return context;
-}
-export { TitleProvider, useTitle, useUpdateTitle };
+
+export { HeadProvider, useHead };
+
+// USAGE;
+
+// useHead("My Page Title", {
+//   description: "Page description",
+//   keywords: "keyword1, keyword2",
+// });
