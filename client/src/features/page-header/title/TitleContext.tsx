@@ -3,7 +3,7 @@ import * as React from "react";
 /**
  * Developer Notes
  *
- * In all homesty this can be redone using react-helmet.
+ * In all homesty this can be redone using react-helmet. But I think it's better to not have so many unnessary dependencies.
  **/
 
 // Define types
@@ -21,6 +21,17 @@ type HeadContextType = {
   state: HeadState;
   setHead: (title: string, metaTags: MetaTags) => void;
 };
+
+// Utility function to update or create a meta tag
+function updateOrCreateMetaTag(name: string, content: string) {
+  let metaTag = document.querySelector(`meta[name="${name}"]`);
+  if (!metaTag) {
+    metaTag = document.createElement("meta");
+    metaTag.setAttribute("name", name);
+    document.head.appendChild(metaTag);
+  }
+  metaTag.setAttribute("content", content);
+}
 
 // Contexts
 const HeadContext = React.createContext<HeadContextType | undefined>(undefined);
@@ -55,10 +66,10 @@ function useHead(title: string, metaTags: MetaTags) {
   React.useEffect(() => {
     context.setHead(title, metaTags);
     document.title = title;
-    // Update meta tags logic here
-    document
-      .querySelector('meta[name="description"]')
-      ?.setAttribute("content", metaTags.description || "");
+
+    // Update description and keywords meta tags
+    updateOrCreateMetaTag("description", metaTags.description || "");
+    updateOrCreateMetaTag("keywords", metaTags.keywords || "");
   }, [title, metaTags, context]);
 }
 
