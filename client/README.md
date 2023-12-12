@@ -1,4 +1,6 @@
 
+# Structure
+The project directory structure is inspired by the [Hospital Run project](https://github.com/HospitalRun/hospitalrun-frontend).  
 
 # SEO Configuration
 ## TODO:
