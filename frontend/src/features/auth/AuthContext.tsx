@@ -155,7 +155,7 @@ const useProvideAuth = (): AuthContextType => {
   const checkServiceOne = async (): Promise<void> => {
     try {
       const response = await api.get("/one/ping");
-      console.log(response.data.message);
+      console.log(response.data);
     } catch (error) {
       createErrorHandler(toast)(error as AxiosError<unknown, any>);
     }
@@ -164,7 +164,7 @@ const useProvideAuth = (): AuthContextType => {
   const checkServiceTwo = async (): Promise<void> => {
     try {
       const response = await api.get("/two/ping");
-      console.log(response.data.message);
+      console.log(response.data);
     } catch (error) {
       createErrorHandler(toast)(error as AxiosError<unknown, any>);
     }
