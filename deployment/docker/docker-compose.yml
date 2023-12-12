@@ -24,6 +24,21 @@ volumes:
   kong-data: {}
 
 services:
+  nginx:
+    image: nginx:nginx-latest
+    restart: always
+    build:
+      context: ../../config
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      kong-gateway:
+        condition: service_started
+      frontend-client:
+        condition: service_started
+
   kong-gateway:
     image: kong:latest
     build: ../../kong
