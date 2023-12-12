@@ -28,7 +28,7 @@ services:
     image: nginx:nginx-latest
     restart: always
     build:
-      context: ../../config
+      context: ../config
       dockerfile: Dockerfile
     ports:
       - 80:80
