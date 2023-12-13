@@ -92,12 +92,8 @@ class JWTHandler {
   }
 
   public verifyToken(token: string): TokenPayload {
-    try {
-      const decoded = jwt.verify(token, this.secretKey);
-      return decoded as TokenPayload;
-    } catch (error) {
-      throw new Error(String(error));
-    }
+    const decoded = jwt.verify(token, this.secretKey);
+    return decoded as TokenPayload;
   }
 
   private createJWT(expiresIn: string, payload: TokenPayload) {

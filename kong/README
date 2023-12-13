@@ -1,1 +1,0 @@
-The easiest way is to only define complex microservices here and let the complex services talk to each other and atomic services internally.

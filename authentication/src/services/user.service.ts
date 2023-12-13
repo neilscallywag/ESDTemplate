@@ -2,7 +2,6 @@ import { randomBytes } from 'crypto';
 import { Repository } from 'typeorm';
 
 import {
-  Role,
   User,
   UserAuth,
   UserData,
@@ -12,6 +11,7 @@ import {
   UserLocationData,
   UserRole,
 } from '../entity';
+import { Role } from '../types';
 
 import { DatabaseService } from './typeorm.service';
 

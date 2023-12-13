@@ -1,6 +1,7 @@
 import { Request } from 'express';
 import * as expressUseragent from 'express-useragent';
 import { OAuth2Client } from 'google-auth-library';
+import { TokenExpiredError } from 'jsonwebtoken';
 
 import logger from '../logging/logger';
 import { TokenType } from '../middlewares/JWT/interfaces';
@@ -35,22 +36,10 @@ export class AuthService {
     }
   }
 
-  private async renewAccessToken(refreshToken: string) {
-    const decoded = this.jwtHandler.verifyToken(refreshToken);
-    const userId = await this.redisService.get(`refreshToken:${refreshToken}`);
-
-    if (!userId || decoded.userId != userId) {
-      throw new Error('Refresh token is invalid');
-    }
-
-    return this.jwtHandler.createToken(
-      decoded.userId,
-      decoded.uniqueId,
-      TokenType.Access,
-    );
-  }
-
-  private createUserDeviceParam(req: Request, useragent) {
+  private createUserDeviceParam(
+    req: Request,
+    useragent: expressUseragent.Details,
+  ) {
     return {
       ipAddress: req.ip,
       userAgent: req.headers['user-agent'],
@@ -139,8 +128,6 @@ export class AuthService {
             geolocation: '',
           });
 
-        await this.redisService.set(`refreshToken:${refreshToken}`, user.id);
-
         return {
           accessToken,
           accessCookieOptions,
@@ -159,20 +146,51 @@ export class AuthService {
     }
   }
 
-  async handleRenewToken(refreshToken: string) {
-    return await this.renewAccessToken(refreshToken);
+  async renewAccessToken(refreshToken: string) {
+    try {
+      const decoded = this.jwtHandler.verifyToken(refreshToken);
+      const exist = await this.redisService.get(`revoked:${decoded.uniqueId}`); // check if uniqueId is in redis revoked list
+
+      if (exist) {
+        throw new Error('Refresh token is revoked.');
+      }
+
+      // TODO: check if userId is in sql database
+
+      return this.jwtHandler.createToken(
+        decoded.userId,
+        decoded.uniqueId,
+        TokenType.Access,
+      );
+    } catch (error) {
+      throw new Error(String(error));
+    }
   }
 
   async handleLogout(refreshToken: string) {
     try {
-      const result = await this.redisService.remove(
-        `refreshToken:${refreshToken}`,
-      );
-      if (result === 0) {
-        throw new Error('Refresh token is invalid');
+      const decoded = this.jwtHandler.verifyToken(refreshToken);
+
+      if (!decoded.exp) {
+        logger.info('Token does not have an expiration time.');
+        throw new Error('Token does not have an expiration time.');
       }
+
+      const currentTime = Math.floor(Date.now() / 1000); // time in second
+      const expiryInSec = decoded.exp - currentTime;
+
+      // Add uniqueId to redis revocation list
+      await this.redisService.set(
+        `revoked:${decoded.uniqueId}`,
+        'revoked',
+        expiryInSec,
+      );
     } catch (error) {
-      throw new Error(String(error));
+      if (error instanceof TokenExpiredError) {
+        logger.info('Attempt to logout with an expired token');
+      } else {
+        throw new Error(String(error));
+      }
     }
   }
 }

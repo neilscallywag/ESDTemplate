@@ -1,16 +1,46 @@
 # Enterprise Solution Development IS213 template files to quickly create a new project
 - [Enterprise Solution Development IS213 template files to quickly create a new project](#enterprise-solution-development-is213-template-files-to-quickly-create-a-new-project)
+  - [TODO](#todo)
+    - [CICD](#cicd)
+    - [Architecture](#architecture)
+    - [Frontend](#frontend)
+    - [Authentication](#authentication)
   - [Folder Structure](#folder-structure)
   - [Commit Hooks](#commit-hooks)
   - [Quick Start](#quick-start)
   - [Miscellaneous](#miscellaneous)
     - [Makefile](#makefile)
 
+## TODO 
+### CICD
+
+- [ ] Cleanup local deployment using docker
+- [ ] Create a .env file populator script
+- [ ] Kubernetes cluster configuration
+- [ ] Terraform configuration
+
+### Architecture
+
+- [ ] Create pipeline to allow separation for read and write databases using Kafka, Debezium for Change Data Capture (CDC).
+- [ ] Better documentation for maintainence 
+- [ ] Mini VAPT to test security issues
+
+
+### Frontend
+- [ ] Migrate from CRA to Vite
+- [ ] Write unit tests
+- [ ] set up visual regression testing pipeline
+
+### Authentication
+- [ ] Write unit tests
+- [ ] Better logging capabilities
+
+
+
 ## Folder Structure
 
 1. **authentication:**
    - Contains code related to authentication and authorization.
-   - Includes configuration files, controllers, entities, middlewares, routes, services, and types.
 
 2. **deployment:**
    - Contains deployment-related files, including Docker and Kubernetes configurations.
@@ -22,8 +52,6 @@
 
 4. **frontend:**
    - Represents the front-end portion of the project.
-   - Includes configuration files, React components, constants, features, and more.
-   - Typical structure for a web application.
 
 5. **kong:**
    - Contains code related to Kong API Gateway.
@@ -35,22 +63,18 @@
 ## Commit Hooks
 Husky is used in tandem with:
 
-lint-staged to ensure files are linted on commit
-commitlint to ensure commits adhere to convention on push
+**lint-staged** to ensure files are linted on commit
+
+**commitlint** to ensure commit messages adhere to [convention](https://www.conventionalcommits.org/en/v1.0.0/). 
 
 ## Quick Start
 
-- Run npm install to install husky and commit lints
-```bash
-npm install
-```
-
 - Populate all the environment variables
    
-- Run make commands to start local development using docker
+- Run make commands to start local development using docker. This command will also install the dependencies for `husky`.
 ```bash
 make up
 ```
 ## Miscellaneous
 ### Makefile
-Refer to the [`/docs/Makefile.md`](/docs/Makefile.md) which provides instructions on how to install Makefile on both Windows and Ubuntu.
+Refer to the [`/docs/Makefile.md`](/docs/Makefile.md) which provides instructions on how to install `Make` on both Windows and Ubuntu.

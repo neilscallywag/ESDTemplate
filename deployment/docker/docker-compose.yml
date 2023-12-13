@@ -24,6 +24,21 @@ volumes:
   kong-data: {}
 
 services:
+  nginx:
+    image: nginx:nginx-latest
+    restart: always
+    build:
+      context: ../config
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      kong-gateway:
+        condition: service_started
+      frontend-client:
+        condition: service_started
+
   kong-gateway:
     image: kong:latest
     build: ../../kong
@@ -137,6 +152,13 @@ services:
       - kong-gateway
     ports:
       - "8080:3000"
+  # client:
+  #   build: ../../client
+  #   image: client:1.0
+  #   depends_on:
+  #     - kong-gateway
+  #   ports:
+  #     - "8080:5173"
 
   kong-migrations:
     image: kong:latest
