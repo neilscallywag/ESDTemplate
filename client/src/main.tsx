@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
-import customTheme from "~/shared/theme";
+import customTheme from "~theme/index";
 
 import { HeadProvider } from "./features/page-header/title/TitleContext";
 import App from "./App";

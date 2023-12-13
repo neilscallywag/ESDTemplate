@@ -61,7 +61,11 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "~": path.resolve(__dirname, "src"),
+      '~shared': path.resolve(__dirname, 'src/shared'),
+      '~theme': path.resolve(__dirname, 'src/shared/theme'),
+      '~models': path.resolve(__dirname, 'src/shared/models'),
+      '~features': path.resolve(__dirname, 'src/features'),
+      '~locales': path.resolve(__dirname, 'src/shared/locales'),
     },
   },
 });

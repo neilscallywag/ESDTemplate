@@ -3,6 +3,7 @@
     "baseUrl": "./",
     "paths": {
       "~shared/*": ["./src/shared/*"],
+      "~theme/*": ["./src/shared/theme/*"],
       "~models/*": ["./src/shared/models/*"],
       "~features/*": ["./src/features/*"],
       "~locales/*": ["./src/shared/locales/*"]
