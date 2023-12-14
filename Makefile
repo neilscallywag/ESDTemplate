@@ -7,7 +7,7 @@ npm-install: npm-install-subdirectories
 	@if [ ! -d "node_modules" ]; then \
 		npm install; \
 	fi
-	echo "All npm dependencies installed."
+	@echo "All npm dependencies installed."
 
 npm-install-subdirectories:
 	@echo "Running npm install in subdirectories..."
