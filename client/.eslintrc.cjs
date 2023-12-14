@@ -15,7 +15,7 @@ module.exports = {
       },
     },
   ],
-  ignorePatterns: ["build/**/*"],
+  ignorePatterns: ["build/**/*", "*.cjs"],
   env: { es6: true },
   parserOptions: {
     ecmaVersion: 2018,

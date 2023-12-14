@@ -151,19 +151,13 @@ services:
         condition: service_healthy
 
   frontend-client:
-    build: ../../frontend
+    build: ../../client
     image: client:1.0
     depends_on:
       - kong-gateway
     ports:
       - "8080:3000"
-  # client:
-  #   build: ../../client
-  #   image: client:1.0
-  #   depends_on:
-  #     - kong-gateway
-  #   ports:
-  #     - "8080:5173"
+
 
   kong-migrations:
     image: kong:latest

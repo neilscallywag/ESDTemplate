@@ -24,4 +24,4 @@ yarn-error.log*
 
 .eslintrc.cjs
 .eslintrc.js
-
+*eslintrc
