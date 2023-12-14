@@ -1,9 +1,15 @@
 PROJECT_NAME = "esd"
 LOCAL_DEPLOY_DIR = "deployment/docker"
 
-npm-install:
+npm-install: npm-install-subdirectories
 	@echo "Running npm install to set up Husky and other dependencies..."
 	@npm install
+
+npm-install-subdirectories:
+	@echo "Running npm install in subdirectories..."
+	@cd authentication && npm install
+	@cd client && npm install
+	@cd frontend && npm install
 
 # ---------------------------------------
 # For deploying docker containers locally

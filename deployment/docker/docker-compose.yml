@@ -100,7 +100,9 @@ services:
 
   cache-service:
     image: redis:7.2-rc2-alpine3.18
-    command: ["redis-server", "--requirepass", "$(cat /run/secrets/redis_password)"]
+    volumes:
+      - ./scripts/redis_init.sh:/etc/redis_init.sh
+    command: ["sh", "/etc/redis_init.sh", "/run/secrets/redis_password"]
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "/run/secrets/redis_password", "--raw", "incr", "ping"]
       interval: 5s
