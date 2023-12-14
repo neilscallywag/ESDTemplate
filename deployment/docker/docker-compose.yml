@@ -49,7 +49,7 @@ services:
       KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml 
     ports:
       - "8000:8000" # Proxy
-      - "8001:8001" # Admin API
+      # - "8001:8001" # Admin API
       - "8443:8443" # Proxy SSL
       - "8444:8444" # Admin API SSL
     healthcheck:
@@ -102,8 +102,7 @@ services:
       mysqldb:
         condition: service_healthy
       kong-gateway:
-      # remember to change this to healthy. Currently is unhealthy
-        condition: service_started 
+        condition: service_healthy
       cache-service:
         condition: service_healthy
 
@@ -126,8 +125,7 @@ services:
       mysqldb:
         condition: service_healthy
       kong-gateway:
-      # remember to change this to healthy. Currently is unhealthy
-        condition: service_started 
+        condition: service_healthy
       cache-service:
         condition: service_healthy
 
