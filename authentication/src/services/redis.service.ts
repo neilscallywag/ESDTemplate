@@ -29,7 +29,7 @@ export class RedisService {
       this.password = process.env.REDIS_PASSWORD;
     }
     this.client = createClient({
-      password: '$(cat /run/secrets/redis_password)',
+      password: process.env.REDIS_PASSWORD,
       socket: {
         host: this.host,
         port: 6379,
