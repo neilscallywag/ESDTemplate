@@ -25,7 +25,7 @@ jobs:
         npm run lint:fix
 
     - name: Install and Run lint:fix in frontend directory
-      working-directory: ./frontend
+      working-directory: ./client
       run: |
         npm install
         npm run lint:fix
