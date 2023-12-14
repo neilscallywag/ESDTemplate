@@ -14,7 +14,7 @@ npm-install-subdirectories:
 	@for dir in ${NPM_SUBDIRS}; do \
 		if [ ! -d "$${dir}/node_modules" ]; then \
 			echo "Running npm install in $${dir} service..."; \
-			cd $${dir} && npm install; \
+			cd $${dir} && npm install && cd ..; \
 		fi \
 	done
 	@echo "All subdirectory dependencies installed."
