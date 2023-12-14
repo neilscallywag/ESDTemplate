@@ -1,6 +1,6 @@
 PROJECT_NAME = "esd"
 LOCAL_DEPLOY_DIR = "deployment/docker"
-NPM_SUBDIRS = authentication client frontend
+NPM_SUBDIRS = authentication client 
 
 npm-install: npm-install-subdirectories
 	@echo "Running npm install to set up Husky and other dependencies..."
@@ -27,11 +27,11 @@ up: npm-install
 		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
 		up --build -d --remove-orphans
 
-kong-migrations: npm-install
-	@docker compose -p ${PROJECT_NAME} \
+nobuild/up: npm-install
+	@docker-compose -p ${PROJECT_NAME} \
 		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
-		up kong-migrations 
-		
+		up -d
+
 # ---------------------------------
 # For tearing down local deployment
 # ---------------------------------
@@ -45,7 +45,11 @@ down-clean:
 		down --volumes --remove-orphans
 	@docker system prune -f
 
-nobuild/up: npm-install
-	@docker-compose -p ${PROJECT_NAME} \
-		-f ${LOCAL_DEPLOY_DIR}/docker-compose.yml \
-		up -d
+prune-all:
+	@echo "Running this command will prune all images. Do you want to proceed [y/N]?"; \
+	read ans; \
+	case "$$ans" in \
+		[Yy]*) docker image prune -a -f ;; \
+		*) echo "Aborting." ;; \
+	esac
+
