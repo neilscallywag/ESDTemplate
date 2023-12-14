@@ -1,4 +1,4 @@
-modules.export = {
+module.exports = {
   plugins: ["import", "simple-import-sort", "prettier", "testing-library"],
   extends: ["eslint:recommended", "plugin:prettier/recommended"],
   overrides: [

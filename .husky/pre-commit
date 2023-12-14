@@ -5,7 +5,6 @@ cd authentication
 npm run lint:fix
 cd ..
 
-
 cd client
 npm run lint:fix
 cd ..
