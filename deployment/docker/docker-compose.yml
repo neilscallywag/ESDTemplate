@@ -87,16 +87,19 @@ services:
     image: mysql:8.0.29
     environment:
       MYSQL_DATABASE: "my_db"
-      MYSQL_PASSWORD: "password"
-      MYSQL_ROOT_PASSWORD: "password"
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./scripts/mysqldb_init.sh:/etc/mysqldb_init.sh
       - ./scripts/mysqldb_update_privileges.sh:/docker-entrypoint-initdb.d/mysqldb_update_privileges.sh
+    command: ["sh", "/etc/mysqldb_init.sh", "/run/secrets/mysql_password", "/run/secrets/mysql_root_password"]
     healthcheck:
         test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
         timeout: 20s
         retries: 10
     read_only: false
+    secrets:
+      - mysql_password
+      - mysql_root_password
 
   cache-service:
     image: redis:7.2-rc2-alpine3.18

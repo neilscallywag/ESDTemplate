@@ -1,15 +1,23 @@
 PROJECT_NAME = "esd"
 LOCAL_DEPLOY_DIR = "deployment/docker"
+NPM_SUBDIRS = authentication client frontend
 
 npm-install: npm-install-subdirectories
 	@echo "Running npm install to set up Husky and other dependencies..."
-	@npm install
+	@if [ ! -d "node_modules" ]; then \
+		npm install; \
+	fi
+	@echo "All npm dependencies installed."
 
 npm-install-subdirectories:
 	@echo "Running npm install in subdirectories..."
-	@cd authentication && npm install
-	@cd client && npm install
-	@cd frontend && npm install
+	@for dir in ${NPM_SUBDIRS}; do \
+		if [ ! -d "$${dir}/node_modules" ]; then \
+			echo "Running npm install in $${dir} service..."; \
+			cd $${dir} && npm install; \
+		fi \
+	done
+	@echo "All subdirectory dependencies installed."
 
 # ---------------------------------------
 # For deploying docker containers locally
