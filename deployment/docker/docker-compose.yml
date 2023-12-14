@@ -53,7 +53,7 @@ services:
       - "8443:8443" # Proxy SSL
       - "8444:8444" # Admin API SSL
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      test: ["CMD", "kong", "health"]
       interval: 10s
       timeout: 5s
       retries: 5
