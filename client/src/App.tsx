@@ -1,9 +1,8 @@
-import React, { lazy, Suspense, useEffect } from "react";
+import React, { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Box, Flex } from "@chakra-ui/react";
 
 import PublicRoute from "~shared/PublicRoute";
-import rehydrateStore from "~shared/store/RehydrateStore";
 
 const DashboardPage = lazy(() => import("~features/dashboard/Dashboard"));
 const LandingPage = lazy(() => import("~features/landing/Landing"));
@@ -11,10 +10,6 @@ const Navbar = lazy(() => import("~shared/components/navbar/Navbar"));
 const Footer = lazy(() => import("~shared/components/footer/Footer"));
 
 const App: React.FC = () => {
-  useEffect(() => {
-    rehydrateStore();
-  }, []);
-
   return (
     <Flex direction="column" minH="100vh">
       <Suspense fallback={"Loading"}>

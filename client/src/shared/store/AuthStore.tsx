@@ -1,16 +1,7 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
-import IndexedDBService from "~shared/services/indexedDB/IndexedDB.service";
-
-import { AuthStateType, SerializeStateType } from "~types";
-
-const idbService = new IndexedDBService("zustandStore", "keyValuePairs", 1);
-
-const serializeState = (state: SerializeStateType): SerializeStateType => {
-  const { isAuthenticated, user, role } = state;
-  return { isAuthenticated, user, role };
-};
+import { AuthStateType } from "~types";
 
 const useAuthStore = create<AuthStateType>()(
   persist(
@@ -19,31 +10,23 @@ const useAuthStore = create<AuthStateType>()(
       user: null,
       role: null,
       login: (userData, roleData) => {
-        const newState = {
+        set({
           user: userData,
           role: roleData,
           isAuthenticated: true,
-        };
-        set(newState);
-        idbService.set("auth-storage", serializeState(newState));
+        });
       },
       logout: () => {
-        const newState = {
+        set({
           user: null,
           role: null,
           isAuthenticated: false,
-        };
-        set(newState);
-        idbService.set("auth-storage", serializeState(newState));
+        });
       },
     }),
     {
       name: "auth-storage",
-      storage: {
-        getItem: (key) => idbService.get(key),
-        setItem: (key, value) => idbService.set(key, JSON.stringify(value)),
-        removeItem: (key) => idbService.remove(key),
-      },
+      storage: createJSONStorage(() => sessionStorage),
     },
   ),
 );
