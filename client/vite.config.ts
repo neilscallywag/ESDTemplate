@@ -61,11 +61,13 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '~shared': path.resolve(__dirname, 'src/shared'),
-      '~theme': path.resolve(__dirname, 'src/shared/theme'),
-      '~models': path.resolve(__dirname, 'src/shared/models'),
-      '~features': path.resolve(__dirname, 'src/features'),
-      '~locales': path.resolve(__dirname, 'src/shared/locales'),
+      "~shared": path.resolve(__dirname, "src/shared"),
+      "~models": path.resolve(__dirname, "src/shared/models"),
+      "~features": path.resolve(__dirname, "src/features"),
+      "~locales": path.resolve(__dirname, "src/shared/locales"),
+      "~api": path.resolve(__dirname, "src/features/api/api"),
+      "~types": path.resolve(__dirname, "src/shared/types"),
+      "~auth": path.resolve(__dirname, "src/features/auth"),
     },
   },
 });

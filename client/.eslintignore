@@ -2,3 +2,4 @@
 **/node_modules/**
 build/
 dev-dist/**
+src/shared/services/indexedDB/IndexedDB.service.ts

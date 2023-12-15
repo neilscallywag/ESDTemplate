@@ -3,10 +3,12 @@
     "baseUrl": "./",
     "paths": {
       "~shared/*": ["./src/shared/*"],
-      "~theme/*": ["./src/shared/theme/*"],
       "~models/*": ["./src/shared/models/*"],
       "~features/*": ["./src/features/*"],
-      "~locales/*": ["./src/shared/locales/*"]
+      "~locales/*": ["./src/shared/locales/*"],
+      "~api": ["./src/features/api/api"],
+      "~types": ["./src/shared/types"],
+      "~auth/*": ["./src/features/auth/*"]
     }
   }
 }

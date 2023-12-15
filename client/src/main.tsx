@@ -6,10 +6,13 @@ import { BrowserRouter } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
-import customTheme from "~theme/index";
+import customTheme from "~shared/theme";
 
-import { HeadProvider } from "./features/page-header/title/TitleContext";
+import { HeadProvider } from "~features/page-header/title/TitleContext";
+
 import App from "./App";
+
+import { AuthProvider } from "~auth/index";
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
@@ -22,9 +25,11 @@ if (rootElement) {
           }
         >
           <BrowserRouter>
-            <HeadProvider>
-              <App />
-            </HeadProvider>
+            <AuthProvider>
+              <HeadProvider>
+                <App />
+              </HeadProvider>
+            </AuthProvider>
           </BrowserRouter>
         </GoogleOAuthProvider>
       </ChakraProvider>
