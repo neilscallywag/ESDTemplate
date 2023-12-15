@@ -11,7 +11,7 @@ import {
   UserLocationData,
   UserRole,
 } from '../entity';
-import { Role } from '../types';
+import { RoleGroups } from '../types';
 
 import { DatabaseService } from './typeorm.service';
 
@@ -43,7 +43,10 @@ class UserService {
     userData: UserData,
     deviceData: UserDeviceData,
     locationData: UserLocationData,
-    userRole: Role,
+    userRole: {
+      name: string;
+      roles: string[];
+    },
   ): Promise<User> {
     const queryRunner = this.dbService.createQueryRunner();
     await queryRunner.connect();
@@ -56,6 +59,7 @@ class UserService {
         user = this.userRepo.create({
           username: userData.name,
           email: userData.email,
+          picture: userData.picture,
         });
         user = await this.userRepo.save(user);
 
@@ -82,7 +86,7 @@ class UserService {
 
         const userRoleEntity = this.userRoleRepo.create({
           user: user,
-          role: userRole,
+          roleGroup: userRole, // userRole is the entire role group object like RoleGroups.USER
         });
         await this.userRoleRepo.save(userRoleEntity);
       }
@@ -98,4 +102,4 @@ class UserService {
   }
 }
 
-export { Role, UserData, UserDeviceData, UserLocationData, UserService };
+export { RoleGroups, UserData, UserDeviceData, UserLocationData, UserService };

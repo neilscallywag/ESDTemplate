@@ -34,6 +34,7 @@ class AuthController {
         identityToken,
         identityCookieOptions,
         user,
+        userRoleParam,
       } = await this.authService.handleGoogleLogin(code, req);
 
       const accessCookieName = process.env.ACCESS_COOKIE_NAME || 'access_token';
@@ -63,7 +64,7 @@ class AuthController {
       res.cookie(accessCookieName, accessToken, accessCookieOptions);
       res.cookie(refreshCookieName, refreshToken, refreshCookieOptions);
       res.cookie(identityCookieName, identityToken, identityCookieOptions);
-      res.status(200).json({ success: true, user });
+      res.status(200).json({ success: true, user: user, role: userRoleParam });
     } catch (error) {
       logger.error('Error was thrown ' + error);
       return res.status(401).json({ error: 'OAuth callback failed' });

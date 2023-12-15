@@ -2,7 +2,10 @@ import { BaseClaims } from './BaseClaims';
 
 export interface IdentityClaims extends BaseClaims {
   name?: string; // Full name
-  userRole?: string; // User role
+  userRole?: {
+    name: string;
+    roles: string[];
+  }; // User role
   given_name?: string; // Given name(s) or first name(s)
   family_name?: string; // Surname(s) or last name(s)
   middle_name?: string; // Middle name(s)

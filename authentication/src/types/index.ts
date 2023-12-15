@@ -1,3 +1,3 @@
 export { GoogleUserInfo } from './GoogleUserInfo';
-export { Role } from './Role';
+export { RoleGroups } from './RoleGroups';
 export { UserData } from './UserData';

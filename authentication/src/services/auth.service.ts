@@ -6,7 +6,7 @@ import { TokenExpiredError } from 'jsonwebtoken';
 import logger from '../logging/logger';
 import { TokenType } from '../middlewares/JWT/interfaces';
 import JWTHandler from '../middlewares/JWT/jwtMiddleware';
-import { GoogleUserInfo, Role } from '../types';
+import { GoogleUserInfo, RoleGroups } from '../types';
 
 import { GoogleAPIService } from './googleapi.service';
 import RedisService from './redis.service';
@@ -76,6 +76,7 @@ export class AuthService {
       const userParam = {
         name: userData.name,
         email: userData.email,
+        picture: userData.picture,
         googleRefreshToken: userAuth.refresh_token,
       };
 
@@ -85,7 +86,7 @@ export class AuthService {
         geolocation: '',
       };
 
-      const userRoleParam: Role = Role.USER;
+      const userRoleParam = RoleGroups.USER;
 
       try {
         const user = await this.userService.createUser(
@@ -136,6 +137,7 @@ export class AuthService {
           identityToken,
           identityCookieOptions,
           user,
+          userRoleParam,
         };
       } catch (error) {
         logger.error(`Error authenticating user: ${error.message}`);
