@@ -1,7 +1,42 @@
+import { EncryptStorage } from "encrypt-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { AuthStateType } from "~types";
+import { AuthStateType, ZustandStorage } from "~types";
+
+const STORAGE_KEY = import.meta.env.VITE_STORAGE_KEY;
+
+const encryptedStorage = new EncryptStorage(STORAGE_KEY, {
+  storageType: "sessionStorage",
+  stateManagementUse: true,
+});
+
+const customSessionStorage: ZustandStorage = {
+  getItem: async (key) => {
+    const item = await encryptedStorage.getItem(key);
+    return item !== undefined ? item : null;
+  },
+  setItem: (key, value) => {
+    return new Promise((resolve, reject) => {
+      try {
+        encryptedStorage.setItem(key, value);
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+  removeItem: (key) => {
+    return new Promise((resolve, reject) => {
+      try {
+        encryptedStorage.removeItem(key);
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+};
 
 const useAuthStore = create<AuthStateType>()(
   persist(
@@ -26,7 +61,7 @@ const useAuthStore = create<AuthStateType>()(
     }),
     {
       name: "auth-storage",
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => customSessionStorage),
     },
   ),
 );
