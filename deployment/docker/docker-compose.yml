@@ -36,7 +36,7 @@ services:
     depends_on:
       kong-gateway:
         condition: service_started
-      frontend-client:
+      client:
         condition: service_started
 
   kong-gateway:
@@ -145,20 +145,22 @@ services:
       cache-service:
         condition: service_healthy
 
-  frontend-client:
-    build: ../../frontend
-    image: client:1.0
-    depends_on:
-      - kong-gateway
-    ports:
-      - "8080:3000"
-  # client:
-  #   build: ../../client
+  # frontend-client:
+  #   build: ../../frontend
   #   image: client:1.0
   #   depends_on:
   #     - kong-gateway
   #   ports:
-  #     - "8080:5173"
+  #     - "8080:3000"
+  client:
+    build: ../../client
+    image: client:1.0
+    depends_on:
+      kong-gateway:
+      # remember to change this to healthy. Currently is unhealthy
+        condition: service_started
+    ports:
+      - "8080:5173"
 
   kong-migrations:
     image: kong:latest
