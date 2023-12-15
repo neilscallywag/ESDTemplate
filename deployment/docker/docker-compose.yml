@@ -36,7 +36,7 @@ services:
     depends_on:
       kong-gateway:
         condition: service_started
-      client:
+      frontend-client:
         condition: service_started
 
   kong-gateway:
@@ -136,4 +136,3 @@ services:
       - kong-gateway
     ports:
       - "8080:3000"
-
