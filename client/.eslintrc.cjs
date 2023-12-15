@@ -72,6 +72,13 @@ module.exports = {
     camelcase: "error",
     "new-cap": "error",
     "no-mixed-operators": "error",
+    "no-warning-comments": [
+      "warn",
+      {
+        terms: ["todo", "fixme"],
+        location: "start", // Checks only the start of comments
+      },
+    ],
     "no-nested-ternary": "error",
     "no-unneeded-ternary": "error",
     "spaced-comment": ["error", "always"],

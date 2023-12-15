@@ -65,7 +65,7 @@ module.exports = {
     'no-warning-comments': [
       'warn',
       {
-        terms: ['todo', 'fixme', 'TODO', 'FIXME'],
+        terms: ['todo', 'fixme'],
         location: 'start', // Checks only the start of comments
       },
     ],
