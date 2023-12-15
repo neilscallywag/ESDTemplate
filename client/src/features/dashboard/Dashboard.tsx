@@ -24,9 +24,9 @@ const Dashboard = () => {
         {/* When user is navigated to /dashboard, this component will be rendered by default */}
         <Route index element={<ViewDashboard />} />
       </Route>
-      <Route element={<PrivateRoute resource="userlist" />}>
+      <Route element={<PrivateRoute resource="gayneil" />}>
         {/* When user is navigated to /dashboard/userlist, this component will be rendered */}
-        <Route path="userlist" element={<ViewUserList />} />
+        <Route path="gayneil" element={<ViewUserList />} />
       </Route>
     </Routes>
   );

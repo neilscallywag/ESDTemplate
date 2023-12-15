@@ -13,6 +13,7 @@ export const RoleGroups = {
     name: 'User',
     roles: [
       'org.user',
+      'org.permissions.SERVICENAME.read',
       'org.permissions.one.read',
       'org.permissions.three.read',
     ],

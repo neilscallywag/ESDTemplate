@@ -4,7 +4,7 @@ import { Box, Link, Text } from "@chakra-ui/react";
 const ViewUserList = () => {
   return (
     <Box p={4}>
-      <Text>Neil</Text>
+      <Text>Gay Neil</Text>
       <Link as={ReactRouterLink} to="/dashboard">
         Back to Dashboard
       </Link>

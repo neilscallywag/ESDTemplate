@@ -24,9 +24,9 @@ const ViewDashboard = () => {
       {/* This is unautorized link. If you want to navigate here, 
       you can go to authentication/src/types/RoleGroups
       and add the following line to roles under User:
-      "org.permissions.userlist.read" */}
-      <Link as={ReactRouterLink} to="/dashboard/userlist">
-        Go to userlist
+      "org.permissions.SERVICENAME.read" */}
+      <Link as={ReactRouterLink} to="/dashboard/gayneil">
+        Go to gayneil
       </Link>
       <br />
       <Button onClick={checkServiceOne} colorScheme="green" mt={4}>

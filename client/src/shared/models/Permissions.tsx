@@ -4,7 +4,7 @@ type PermissionsModel = {
 
 const applicationPermissions: PermissionsModel = {
   dashboard: ["org.admin", "org.user"],
-  userlist: ["org.admin", "org.permissions.userlist.read"],
+  gayneil: ["org.admin", "org.permissions.SERVICENAME.read"],
 
   // Below are examples of permissions that can be used in the application
   // settings: ['org.admin', 'org.permissions.settings.manage'],
