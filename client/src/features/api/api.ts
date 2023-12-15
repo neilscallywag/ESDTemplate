@@ -55,9 +55,11 @@ export const createErrorHandler =
 
 // Usage in a component:
 
-// const toast = useToast();
-// api.get<ResponseType>('/some-endpoint')
-//   .then(handleResponse)
-//   .catch(createErrorHandler(toast));
+/*
+ * const toast = useToast();
+ * api.get<ResponseType>('/some-endpoint')
+ *   .then(handleResponse)
+ *   .catch(createErrorHandler(toast));
+ */
 
 // Replace ResponseType with the expected response data type from the API.

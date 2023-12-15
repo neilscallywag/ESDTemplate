@@ -36,7 +36,9 @@ if (rootElement) {
     </React.StrictMode>,
   );
 }
-// Apparently, vite does not natively ship with a service worker.
-// https://stackoverflow.com/questions/69961761/react-js-builds-with-vite-does-not-include-service-worker-ts
-// Hence need to install a module to do it for us.
-// Please check vite.config.ts to configure the service worker.
+/*
+ * Apparently, vite does not natively ship with a service worker.
+ * https://stackoverflow.com/questions/69961761/react-js-builds-with-vite-does-not-include-service-worker-ts
+ * Hence need to install a module to do it for us.
+ * Please check vite.config.ts to configure the service worker.
+ */

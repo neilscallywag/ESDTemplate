@@ -20,8 +20,10 @@ const production: cors.CorsOptions = {
   optionsSuccessStatus: 204,
   preflightContinue: false,
   maxAge: 600, // 10 minutes
-  // allowedHeaders: ['Content-Type', 'Authorization'],
-  // exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  /*
+   * allowedHeaders: ['Content-Type', 'Authorization'],
+   * exposedHeaders: ['Content-Range', 'X-Content-Range'],
+   */
 };
 
 export const corsOptions: cors.CorsOptions =

@@ -15,9 +15,11 @@ import { UserService } from './user.service';
 
 export class AuthService {
   private jwtHandler: JWTHandler;
-  // in the most technical of sense this should not take in a specific service but
-  // should follow a dependency injection pattern where any service can be injected with its methods
-  // available and the same. IDK need to discuss this w @zt.yue
+  /*
+   * in the most technical of sense this should not take in a specific service but
+   * should follow a dependency injection pattern where any service can be injected with its methods
+   * available and the same. IDK need to discuss this w @zt.yue
+   */
   private googleAPIService: GoogleAPIService;
   private redisService: RedisService;
   private userService: UserService;
@@ -100,7 +102,7 @@ export class AuthService {
         const {
           token: refreshToken,
           cookieOptions: refreshCookieOptions,
-          uniqueId: uniqueId,
+          uniqueId,
         } = this.jwtHandler.createToken(
           user.id,
           JWTHandler.generateUniqueIdentifier(),

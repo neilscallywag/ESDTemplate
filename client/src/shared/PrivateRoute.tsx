@@ -25,9 +25,11 @@ export default PrivateRoute;
 
 // Usage:
 
-// <Route element={<PrivateRoute resource="resource name1" />}>
-//  <Route index element={<Component1 />} />
-// </Route>
-// <Route element={<PrivateRoute resource="resource name2" />}>
-//  <Route path="path" element={<Component2 />} />
-// </Route>
+/*
+ * <Route element={<PrivateRoute resource="resource name1" />}>
+ *  <Route index element={<Component1 />} />
+ * </Route>
+ * <Route element={<PrivateRoute resource="resource name2" />}>
+ *  <Route path="path" element={<Component2 />} />
+ * </Route>
+ */

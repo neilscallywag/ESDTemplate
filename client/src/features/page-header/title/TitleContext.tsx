@@ -4,7 +4,8 @@ import * as React from "react";
  * Developer Notes
  *
  * In all homesty this can be redone using react-helmet. But I think it's better to not have so many unnessary dependencies.
- **/
+ *
+ */
 
 // Define types
 type MetaTags = {
@@ -75,8 +76,10 @@ export { HeadProvider, useHead };
 
 // USAGE;
 
-// const updateHead = useHead();
-// updateHead("My Page Title", {
-//   description: "Page description",
-//   keywords: "keyword1, keyword2",
-// }, []);
+/*
+ * const updateHead = useHead();
+ * updateHead("My Page Title", {
+ *   description: "Page description",
+ *   keywords: "keyword1, keyword2",
+ * }, []);
+ */

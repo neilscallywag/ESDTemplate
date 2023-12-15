@@ -37,5 +37,7 @@ export default PermissionService;
 
 // Usage:
 
-// const permissionService = new PermissionService();
-// const canAccessDashboard = permissionService.can('dashboard');
+/*
+ * const permissionService = new PermissionService();
+ * const canAccessDashboard = permissionService.can('dashboard');
+ */

@@ -107,21 +107,25 @@ class JWTHandler {
 
 export default JWTHandler;
 
-///////////////////////////
-//////// USAGE EXAMPLE //////
-/////////////////////////////
+// /////////////////////////
+// ////// USAGE EXAMPLE //////
+// ///////////////////////////
 
-// const jwtHandler = new JWTHandler();
-// const accessClaims: AccessClaims = {
-//   iss: "issuer",
-//   aud: "audience",
-//   // ... other access token specific claims
-// };
-// const accessToken = jwtHandler.createToken("userId", TokenType.Access, accessClaims);
+/*
+ * const jwtHandler = new JWTHandler();
+ * const accessClaims: AccessClaims = {
+ *   iss: "issuer",
+ *   aud: "audience",
+ *   // ... other access token specific claims
+ * };
+ * const accessToken = jwtHandler.createToken("userId", TokenType.Access, accessClaims);
+ */
 
-// const identityClaims: IdentityClaims = {
-//   name: "John Doe",
-//   given_name: "John",
-//   // ... other identity token specific claims
-// };
-// const identityToken = jwtHandler.createToken("userId", TokenType.Identity, identityClaims);
+/*
+ * const identityClaims: IdentityClaims = {
+ *   name: "John Doe",
+ *   given_name: "John",
+ *   // ... other identity token specific claims
+ * };
+ * const identityToken = jwtHandler.createToken("userId", TokenType.Identity, identityClaims);
+ */
