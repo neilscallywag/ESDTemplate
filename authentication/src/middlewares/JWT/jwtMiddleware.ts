@@ -107,10 +107,7 @@ class JWTHandler {
 
 export default JWTHandler;
 
-// /////////////////////////
-// ////// USAGE EXAMPLE //////
-// ///////////////////////////
-
+// usage
 /*
  * const jwtHandler = new JWTHandler();
  * const accessClaims: AccessClaims = {

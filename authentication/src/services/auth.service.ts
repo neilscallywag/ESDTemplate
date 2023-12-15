@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { Request } from 'express';
 import * as expressUseragent from 'express-useragent';
 import { OAuth2Client } from 'google-auth-library';
@@ -38,6 +39,13 @@ export class AuthService {
     }
   }
 
+  private getDeviceType(useragent: expressUseragent.Details): string {
+    if (useragent.isDesktop) return 'Desktop';
+    if (useragent.isMobile) return 'Mobile';
+    if (useragent.isTablet) return 'Tablet';
+    return 'Unknown';
+  }
+
   private createUserDeviceParam(
     req: Request,
     useragent: expressUseragent.Details,
@@ -45,16 +53,11 @@ export class AuthService {
     return {
       ipAddress: req.ip,
       userAgent: req.headers['user-agent'],
-      deviceType: useragent.isDesktop
-        ? 'Desktop'
-        : useragent.isMobile
-          ? 'Mobile'
-          : useragent.isTablet
-            ? 'Tablet'
-            : 'Unknown',
+      deviceType: this.getDeviceType(useragent),
     };
   }
 
+  // eslint-disable-next-line max-statements
   async handleGoogleLogin(code: string, req: Request) {
     this.validateEnvironmentVariables();
 
@@ -116,7 +119,9 @@ export class AuthService {
           this.jwtHandler.createToken(user.id, uniqueId, TokenType.Identity, {
             name: userData.name,
             userRole: userRoleParam,
+            // eslint-disable-next-line camelcase
             given_name: userData.given_name,
+            // eslint-disable-next-line camelcase
             family_name: userData.family_name,
             email: userData.email,
             ipAddress: req.ip,

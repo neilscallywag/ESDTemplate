@@ -30,7 +30,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/member-delimiter-style': [
       'error',
-      { singleline: { delimiter: 'semi', requireLast: true } },
+      { singleline: { delimiter: 'semi', requireLast: false } },
     ],
     semi: ['error', 'always'],
     // Clean Code specific rules
