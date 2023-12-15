@@ -75,6 +75,9 @@ plugins:
       logout_url: "http://auth-service/auth/logout"
       unauthenticated_endpoints: 
         - "/auth/google/callback"
+      # Access rules based on permissions to limit access to service endpoints
       role_access_rules:
-        "admin": ["/one/ping", "/two/ping", "/three/ping"]
-        "user": ["/one/ping", "/three/ping"]
+        "org.permissions.one.read": ["/one/ping"]
+        "org.permissions.one.write": ["/one/pong"]
+        "org.permissions.two.read": ["/two/ping"]
+        "org.permissions.three.read": ["/three/ping"]
