@@ -62,6 +62,13 @@ module.exports = {
     'no-unneeded-ternary': 'error',
     'spaced-comment': ['error', 'always'],
     'multiline-comment-style': ['error', 'starred-block'],
+    'no-warning-comments': [
+      'warn',
+      {
+        terms: ['todo', 'fixme', 'TODO', 'FIXME'],
+        location: 'start', // Checks only the start of comments
+      },
+    ],
     'no-throw-literal': 'error',
     'handle-callback-err': 'error',
     'no-redeclare': 'error',
