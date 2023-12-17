@@ -1,12 +1,17 @@
 import React, { createContext, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@chakra-ui/react";
-import { useGoogleLogin } from "@react-oauth/google";
+import { CodeResponse, useGoogleLogin } from "@react-oauth/google";
 import { AxiosError } from "axios";
 
 import useAuthStore from "~shared/store/AuthStore";
 
-import { api, createErrorHandler, handleResponse } from "~api";
+import {
+  api,
+  createErrorHandler,
+  createGoogleErrorHandler,
+  handleResponse,
+} from "~api";
 import { AuthContextType } from "~types";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -51,15 +56,7 @@ const useProvideAuth = (): AuthContextType => {
       }
     },
     onError: (error): void => {
-      toast({
-        title: "Google Login Error",
-        description: error.error_description
-          ? error.error_description
-          : "An error occurred.",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
+      createGoogleErrorHandler(toast)(error as CodeResponse); // using the modified errorHandler to use toast
     },
     flow: "auth-code",
   });

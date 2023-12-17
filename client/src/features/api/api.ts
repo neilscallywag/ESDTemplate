@@ -1,4 +1,5 @@
 import { useToast, UseToastOptions } from "@chakra-ui/react";
+import { CodeResponse } from "@react-oauth/google";
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
@@ -45,6 +46,31 @@ export const createErrorHandler =
       const toastOptions: UseToastOptions = {
         title: "Error",
         description: `Failed setting up the request: ${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      };
+      toast(toastOptions);
+    }
+  };
+
+export const createGoogleErrorHandler =
+  (toast: ReturnType<typeof useToast>) => (error: CodeResponse) => {
+    if (error.error_description) {
+      const toastOptions: UseToastOptions = {
+        title: "Error",
+        description: error.error_description
+          ? error.error_description
+          : "An error occurred.",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      };
+      toast(toastOptions);
+    } else {
+      const toastOptions: UseToastOptions = {
+        title: "Error",
+        description: `Failed setting up google request: ${error}`,
         status: "error",
         duration: 9000,
         isClosable: true,
