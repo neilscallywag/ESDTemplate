@@ -54,11 +54,12 @@ class UserService {
 
     try {
       const user = await this.findOrCreateUser(userData);
-      await this.createUserAuth(user, userData);
-      await this.createUserDevice(user, deviceData);
-      await this.createUserLocation(user, locationData);
-      await this.createUserRole(user, userRole);
-
+      if (!user) {
+        await this.createUserAuth(user, userData);
+        await this.createUserDevice(user, deviceData);
+        await this.createUserLocation(user, locationData);
+        await this.createUserRole(user, userRole);
+      }
       await queryRunner.commitTransaction();
       return user;
     } catch (error) {
