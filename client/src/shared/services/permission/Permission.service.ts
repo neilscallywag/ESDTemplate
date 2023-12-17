@@ -6,7 +6,7 @@ class PermissionService {
   constructor() {
     this.getCurrentUserRoles = this.getCurrentUserRoles.bind(this);
     this.verifyRole = this.verifyRole.bind(this);
-    this.can = this.can.bind(this);
+    this.canAccess = this.canAccess.bind(this);
   }
 
   // Retrieves the current user's roles from the Zustand store.
@@ -21,7 +21,7 @@ class PermissionService {
   }
 
   // Determines if the current user has any of the roles required to access a specific resource.
-  can(resource: string): boolean {
+  canAccess(resource: string): boolean {
     const currentUserRoles = this.getCurrentUserRoles();
 
     // Get the roles required to access the specified resource.

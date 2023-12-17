@@ -11,9 +11,11 @@ interface PrivateRouteProps {
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ resource }) => {
   const { isAuthenticated } = useAuth();
+
   const permissionService = new PermissionService();
   const hasRequiredPermissions =
-    isAuthenticated && permissionService.can(resource);
+    isAuthenticated && permissionService.canAccess(resource);
+    
   return hasRequiredPermissions ? (
     <Outlet />
   ) : (

@@ -2,7 +2,7 @@ import { EncryptStorage } from "encrypt-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { AuthStateType, ZustandStorage } from "~types";
+import { AuthStateType, ZustandStorageType } from "~types";
 
 const STORAGE_KEY = import.meta.env.VITE_STORAGE_KEY;
 
@@ -11,7 +11,7 @@ const encryptedStorage = new EncryptStorage(STORAGE_KEY, {
   stateManagementUse: true,
 });
 
-const customSessionStorage: ZustandStorage = {
+const customSessionStorage: ZustandStorageType = {
   getItem: async (key) => {
     const item = await encryptedStorage.getItem(key);
     return item !== undefined ? item : null;
