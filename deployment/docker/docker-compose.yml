@@ -132,7 +132,8 @@ services:
   frontend-client:
     build: ../../client
     image: client:1.0
-    depends_on:
-      - kong-gateway
+    # Is this necessary? @ztdevelops
+    # depends_on:
+    #   - kong-gateway
     ports:
       - "8080:5173"
