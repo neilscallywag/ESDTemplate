@@ -13,79 +13,69 @@ export const api: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-export const handleResponse = async <T>(
-  response: AxiosResponse<T>,
-): Promise<T> => {
+export async function handleResponse<T>(response: AxiosResponse<T>): Promise<T> {
   if (response.status >= 200 && response.status < 300) {
     return response.data;
   }
   throw new Error(`HTTP error! Status: ${response.status}`);
-};
+}
 
-export const createErrorHandler =
-  (toast: ReturnType<typeof useToast>) => (error: AxiosError) => {
+export function createErrorHandler(toast: ReturnType<typeof useToast>) {
+  return (error: AxiosError) => {
+    let toastOptions: UseToastOptions;
+
     if (error.response) {
-      const toastOptions: UseToastOptions = {
+      toastOptions = {
         title: "Error",
         description: error.response.data as string,
         status: "error",
         duration: 9000,
         isClosable: true,
       };
-      toast(toastOptions);
     } else if (error.request) {
-      const toastOptions: UseToastOptions = {
+      toastOptions = {
         title: "Error",
         description: "No response received from the server.",
         status: "error",
         duration: 9000,
         isClosable: true,
       };
-      toast(toastOptions);
     } else {
-      const toastOptions: UseToastOptions = {
+      toastOptions = {
         title: "Error",
         description: `Failed setting up the request: ${error}`,
         status: "error",
         duration: 9000,
         isClosable: true,
       };
-      toast(toastOptions);
     }
-  };
 
-export const createGoogleErrorHandler =
-  (toast: ReturnType<typeof useToast>) => (error: CodeResponse) => {
+    toast(toastOptions);
+  };
+}
+
+export function createGoogleErrorHandler(toast: ReturnType<typeof useToast>) {
+  return (error: CodeResponse) => {
+    let toastOptions: UseToastOptions;
+
     if (error.error_description) {
-      const toastOptions: UseToastOptions = {
+      toastOptions = {
         title: "Error",
-        description: error.error_description
-          ? error.error_description
-          : "An error occurred.",
+        description: error.error_description ? error.error_description : "An error occurred.",
         status: "error",
         duration: 9000,
         isClosable: true,
       };
-      toast(toastOptions);
     } else {
-      const toastOptions: UseToastOptions = {
+      toastOptions = {
         title: "Error",
         description: `Failed setting up google request: ${error}`,
         status: "error",
         duration: 9000,
         isClosable: true,
       };
-      toast(toastOptions);
     }
+
+    toast(toastOptions);
   };
-
-// Usage in a component:
-
-/*
- * const toast = useToast();
- * api.get<ResponseType>('/some-endpoint')
- *   .then(handleResponse)
- *   .catch(createErrorHandler(toast));
- */
-
-// Replace ResponseType with the expected response data type from the API.
+}
