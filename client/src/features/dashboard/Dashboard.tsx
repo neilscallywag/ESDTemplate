@@ -19,12 +19,12 @@ const Dashboard = () => {
 
   return (
     <Routes>
-      {/* Check if user has permission to access this route/resource */}
-      <Route element={<PrivateRoute resource="dashboard" />}>
+      {/* Check if user has permission to access this route/resource requested */}
+      <Route element={<PrivateRoute resourceRequested="dashboard" />}>
         {/* When user is navigated to /dashboard, this component will be rendered by default */}
         <Route index element={<ViewDashboard />} />
       </Route>
-      <Route element={<PrivateRoute resource="gayneil" />}>
+      <Route element={<PrivateRoute resourceRequested="gayneil" />}>
         {/* When user is navigated to /dashboard/userlist, this component will be rendered */}
         <Route path="gayneil" element={<ViewUserList />} />
       </Route>

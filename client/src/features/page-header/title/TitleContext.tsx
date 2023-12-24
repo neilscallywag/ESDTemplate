@@ -3,7 +3,7 @@ import * as React from "react";
 /**
  * Developer Notes
  *
- * In all homesty this can be redone using react-helmet. But I think it's better to not have so many unnessary dependencies.
+ * In all honesty this can be redone using react-helmet. But I think it's better to not have so many unnessary dependencies.
  *
  */
 

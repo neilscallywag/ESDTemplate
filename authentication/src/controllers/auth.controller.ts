@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import logger from '../logging/logger';
 import { TokenCreationResult } from '../middlewares/JWT/interfaces';
 import AuthService from '../services/auth.service';
+import { TokenData } from '../types';
 
 class AuthController {
   private authService: AuthService;
@@ -17,12 +18,18 @@ class AuthController {
   async handleGoogleCallback(req: Request, res: Response) {
     const code = req.body?.code;
     if (!code) {
-      this.logMissingCode(req);
+      logger.info(
+        'incoming request for google oauth callback did not have a code\n' +
+          req.body,
+      );
       return res.status(400).json({ error: 'Google access code is missing' });
     }
 
     try {
-      const tokenData = await this.authService.handleGoogleLogin(code, req);
+      const tokenData: TokenData = await this.authService.handleGoogleLogin(
+        code,
+        req,
+      );
       this.sendAuthCookies(res, tokenData);
       res.status(200).json({
         success: true,
@@ -35,14 +42,7 @@ class AuthController {
     }
   }
 
-  private logMissingCode(req: Request) {
-    logger.info(
-      'incoming request for google oauth callback did not have a code\n' +
-        req.body,
-    );
-  }
-
-  private sendAuthCookies(res: Response, tokenData) {
+  private sendAuthCookies(res: Response, tokenData: TokenData) {
     const {
       accessToken,
       accessCookieOptions,

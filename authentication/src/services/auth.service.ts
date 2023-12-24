@@ -7,7 +7,7 @@ import { TokenExpiredError } from 'jsonwebtoken';
 import logger from '../logging/logger';
 import { TokenType } from '../middlewares/JWT/interfaces';
 import JWTHandler from '../middlewares/JWT/jwtMiddleware';
-import { GoogleUserInfo, RoleGroups } from '../types';
+import { DeviceType, GoogleUserInfo, RoleGroups, TokenData } from '../types';
 
 import { GoogleAPIService } from './googleapi.service';
 import RedisService from './redis.service';
@@ -39,11 +39,11 @@ export class AuthService {
     }
   }
 
-  private getDeviceType(useragent: expressUseragent.Details): string {
-    if (useragent.isDesktop) return 'Desktop';
-    if (useragent.isMobile) return 'Mobile';
-    if (useragent.isTablet) return 'Tablet';
-    return 'Unknown';
+  private getDeviceType(useragent: expressUseragent.Details): DeviceType {
+    if (useragent.isDesktop) return DeviceType.Desktop;
+    if (useragent.isMobile) return DeviceType.Mobile;
+    if (useragent.isTablet) return DeviceType.Tablet;
+    return DeviceType.Unknown;
   }
 
   private createUserDeviceParam(
@@ -58,7 +58,7 @@ export class AuthService {
   }
 
   // eslint-disable-next-line max-statements
-  async handleGoogleLogin(code: string, req: Request) {
+  async handleGoogleLogin(code: string, req: Request): Promise<TokenData> {
     this.validateEnvironmentVariables();
 
     const oAuth2Client = new OAuth2Client(

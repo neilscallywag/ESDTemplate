@@ -6,15 +6,15 @@ import PermissionService from "~shared/services/permission/Permission.service";
 import { useAuth } from "~features/auth";
 
 interface PrivateRouteProps {
-  resource: string;
+  resourceRequested: string;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ resource }) => {
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ resourceRequested }) => {
   const { isAuthenticated } = useAuth();
 
   const permissionService = new PermissionService();
   const hasRequiredPermissions =
-    isAuthenticated && permissionService.canAccess(resource);
+    isAuthenticated && permissionService.canAccess(resourceRequested);
 
   return hasRequiredPermissions ? (
     <Outlet />
@@ -28,10 +28,10 @@ export default PrivateRoute;
 // Usage:
 
 /*
- * <Route element={<PrivateRoute resource="resource name1" />}>
+ * <Route element={<PrivateRoute resourceRequested="resourceRequested name1" />}>
  *  <Route index element={<Component1 />} />
  * </Route>
- * <Route element={<PrivateRoute resource="resource name2" />}>
+ * <Route element={<PrivateRoute resourceRequested="resourceRequested name2" />}>
  *  <Route path="path" element={<Component2 />} />
  * </Route>
  */

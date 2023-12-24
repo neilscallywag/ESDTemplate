@@ -21,11 +21,11 @@ class PermissionService {
   }
 
   // Determines if the current user has any of the roles required to access a specific resource.
-  canAccess(resource: string): boolean {
+  canAccess(resourceRequested: string): boolean {
     const currentUserRoles = this.getCurrentUserRoles();
 
     // Get the roles required to access the specified resource.
-    const requiredAccess = applicationPermissions[resource];
+    const requiredAccess = applicationPermissions[resourceRequested];
 
     return requiredAccess.some((role) =>
       this.verifyRole(currentUserRoles, role),

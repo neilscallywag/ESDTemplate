@@ -2,10 +2,10 @@ import { useToast, UseToastOptions } from "@chakra-ui/react";
 import { CodeResponse } from "@react-oauth/google";
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 
-const baseURL = import.meta.env.VITE_API_BASE_URL;
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const api: AxiosInstance = axios.create({
-  baseURL: baseURL,
+  baseURL: BASE_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
