@@ -13,7 +13,9 @@ export const api: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-export async function handleResponse<T>(response: AxiosResponse<T>): Promise<T> {
+export async function handleResponse<T>(
+  response: AxiosResponse<T>,
+): Promise<T> {
   if (response.status >= 200 && response.status < 300) {
     return response.data;
   }
@@ -61,7 +63,9 @@ export function createGoogleErrorHandler(toast: ReturnType<typeof useToast>) {
     if (error.error_description) {
       toastOptions = {
         title: "Error",
-        description: error.error_description ? error.error_description : "An error occurred.",
+        description: error.error_description
+          ? error.error_description
+          : "An error occurred.",
         status: "error",
         duration: 9000,
         isClosable: true,
