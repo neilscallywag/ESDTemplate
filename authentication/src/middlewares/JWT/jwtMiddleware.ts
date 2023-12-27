@@ -53,7 +53,7 @@ class JWTHandler {
       let payload: TokenPayload;
 
       switch (type) {
-        case TokenType.Refresh:
+        case TokenType.REFRESH:
           expiration = this.refreshExp;
           cookieOptions = refreshCookieOptions;
           payload = {
@@ -62,7 +62,7 @@ class JWTHandler {
             ...(claims as RefreshClaims),
           };
           break;
-        case TokenType.Access:
+        case TokenType.ACCESS:
           expiration = this.accessExp;
           cookieOptions = accessCookieOptions;
           payload = {
@@ -71,7 +71,7 @@ class JWTHandler {
             ...(claims as AccessClaims),
           };
           break;
-        case TokenType.Identity:
+        case TokenType.IDENTITY:
           expiration = this.identityExp;
           cookieOptions = identityCookieOptions;
           payload = {
@@ -115,7 +115,7 @@ export default JWTHandler;
  *   aud: "audience",
  *   // ... other access token specific claims
  * };
- * const accessToken = jwtHandler.createToken("userId", TokenType.Access, accessClaims);
+ * const accessToken = jwtHandler.createToken("userId", TokenType.ACCESS, accessClaims);
  */
 
 /*
@@ -124,5 +124,5 @@ export default JWTHandler;
  *   given_name: "John",
  *   // ... other identity token specific claims
  * };
- * const identityToken = jwtHandler.createToken("userId", TokenType.Identity, identityClaims);
+ * const identityToken = jwtHandler.createToken("userId", TokenType.IDENTITY, identityClaims);
  */

@@ -1,3 +1,5 @@
+import { DeviceType } from '../../../types';
+
 import { BaseClaims } from './BaseClaims';
 
 export interface IdentityClaims extends BaseClaims {
@@ -22,7 +24,7 @@ export interface IdentityClaims extends BaseClaims {
   locale?: string; // Locale
   ipAddress?: string; // IP address
   userAgent?: string; // User agent
-  deviceType?: string; // Device type
+  deviceType?: DeviceType; // Device type
   geolocation?: string; // Geolocation
   phone_number?: string; // Preferred telephone number
   phone_number_verified?: boolean; // True if the phone number has been verified; otherwise false

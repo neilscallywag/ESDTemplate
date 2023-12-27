@@ -40,10 +40,10 @@ export class AuthService {
   }
 
   private getDeviceType(useragent: expressUseragent.Details): DeviceType {
-    if (useragent.isDesktop) return DeviceType.Desktop;
-    if (useragent.isMobile) return DeviceType.Mobile;
-    if (useragent.isTablet) return DeviceType.Tablet;
-    return DeviceType.Unknown;
+    if (useragent.isDesktop) return DeviceType.DESKTOP;
+    if (useragent.isMobile) return DeviceType.MOBILE;
+    if (useragent.isTablet) return DeviceType.TABLET;
+    return DeviceType.UNKNOWN;
   }
 
   private createUserDeviceParam(
@@ -109,14 +109,14 @@ export class AuthService {
         } = this.jwtHandler.createToken(
           user.id,
           JWTHandler.generateUniqueIdentifier(),
-          TokenType.Refresh,
+          TokenType.REFRESH,
         );
 
         const { token: accessToken, cookieOptions: accessCookieOptions } =
-          this.jwtHandler.createToken(user.id, uniqueId, TokenType.Access);
+          this.jwtHandler.createToken(user.id, uniqueId, TokenType.ACCESS);
 
         const { token: identityToken, cookieOptions: identityCookieOptions } =
-          this.jwtHandler.createToken(user.id, uniqueId, TokenType.Identity, {
+          this.jwtHandler.createToken(user.id, uniqueId, TokenType.IDENTITY, {
             name: userData.name,
             userRole: userRoleParam,
             // eslint-disable-next-line camelcase
@@ -126,13 +126,7 @@ export class AuthService {
             email: userData.email,
             ipAddress: req.ip,
             userAgent: req.headers['user-agent'],
-            deviceType: useragent.isDesktop
-              ? 'Desktop'
-              : useragent.isMobile
-                ? 'Mobile'
-                : useragent.isTablet
-                  ? 'Tablet'
-                  : 'Unknown',
+            deviceType: this.getDeviceType(useragent),
             geolocation: '',
           });
 
@@ -169,7 +163,7 @@ export class AuthService {
       return this.jwtHandler.createToken(
         decoded.userId,
         decoded.uniqueId,
-        TokenType.Access,
+        TokenType.ACCESS,
       );
     } catch (error) {
       throw new Error(String(error));
