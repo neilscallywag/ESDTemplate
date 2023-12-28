@@ -11,6 +11,7 @@ import { User } from './User';
 export interface UserData {
   name: string;
   email: string;
+  picture: string;
   googleAccessKey?: string;
 }
 

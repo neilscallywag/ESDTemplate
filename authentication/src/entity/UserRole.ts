@@ -6,8 +6,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { Role } from '../types/Role';
-
 import { User } from './index';
 
 @Entity()
@@ -19,6 +17,9 @@ export class UserRole {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @Column({ type: 'enum', enum: Role, default: Role.USER })
-  role: Role;
+  @Column({ type: 'simple-json' })
+  roleGroup: {
+    name: string;
+    roles: string[];
+  };
 }

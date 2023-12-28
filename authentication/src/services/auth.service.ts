@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { Request } from 'express';
 import * as expressUseragent from 'express-useragent';
 import { OAuth2Client } from 'google-auth-library';
@@ -6,7 +7,7 @@ import { TokenExpiredError } from 'jsonwebtoken';
 import logger from '../logging/logger';
 import { TokenType } from '../middlewares/JWT/interfaces';
 import JWTHandler from '../middlewares/JWT/jwtMiddleware';
-import { GoogleUserInfo, Role } from '../types';
+import { DeviceType, GoogleUserInfo, RoleGroups, TokenData } from '../types';
 
 import { GoogleAPIService } from './googleapi.service';
 import RedisService from './redis.service';
@@ -15,9 +16,11 @@ import { UserService } from './user.service';
 
 export class AuthService {
   private jwtHandler: JWTHandler;
-  // in the most technical of sense this should not take in a specific service but
-  // should follow a dependency injection pattern where any service can be injected with its methods
-  // available and the same. IDK need to discuss this w @zt.yue
+  /*
+   * in the most technical of sense this should not take in a specific service but
+   * should follow a dependency injection pattern where any service can be injected with its methods
+   * available and the same. IDK need to discuss this w @zt.yue
+   */
   private googleAPIService: GoogleAPIService;
   private redisService: RedisService;
   private userService: UserService;
@@ -36,6 +39,13 @@ export class AuthService {
     }
   }
 
+  private getDeviceType(useragent: expressUseragent.Details): DeviceType {
+    if (useragent.isDesktop) return DeviceType.DESKTOP;
+    if (useragent.isMobile) return DeviceType.MOBILE;
+    if (useragent.isTablet) return DeviceType.TABLET;
+    return DeviceType.UNKNOWN;
+  }
+
   private createUserDeviceParam(
     req: Request,
     useragent: expressUseragent.Details,
@@ -43,17 +53,12 @@ export class AuthService {
     return {
       ipAddress: req.ip,
       userAgent: req.headers['user-agent'],
-      deviceType: useragent.isDesktop
-        ? 'Desktop'
-        : useragent.isMobile
-          ? 'Mobile'
-          : useragent.isTablet
-            ? 'Tablet'
-            : 'Unknown',
+      deviceType: this.getDeviceType(useragent),
     };
   }
 
-  async handleGoogleLogin(code: string, req: Request) {
+  // eslint-disable-next-line max-statements
+  async handleGoogleLogin(code: string, req: Request): Promise<TokenData> {
     this.validateEnvironmentVariables();
 
     const oAuth2Client = new OAuth2Client(
@@ -76,6 +81,7 @@ export class AuthService {
       const userParam = {
         name: userData.name,
         email: userData.email,
+        picture: userData.picture,
         googleRefreshToken: userAuth.refresh_token,
       };
 
@@ -85,7 +91,7 @@ export class AuthService {
         geolocation: '',
       };
 
-      const userRoleParam: Role = Role.USER;
+      const userRoleParam = RoleGroups.USER;
 
       try {
         const user = await this.userService.createUser(
@@ -99,32 +105,28 @@ export class AuthService {
         const {
           token: refreshToken,
           cookieOptions: refreshCookieOptions,
-          uniqueId: uniqueId,
+          uniqueId,
         } = this.jwtHandler.createToken(
           user.id,
           JWTHandler.generateUniqueIdentifier(),
-          TokenType.Refresh,
+          TokenType.REFRESH,
         );
 
         const { token: accessToken, cookieOptions: accessCookieOptions } =
-          this.jwtHandler.createToken(user.id, uniqueId, TokenType.Access);
+          this.jwtHandler.createToken(user.id, uniqueId, TokenType.ACCESS);
 
         const { token: identityToken, cookieOptions: identityCookieOptions } =
-          this.jwtHandler.createToken(user.id, uniqueId, TokenType.Identity, {
+          this.jwtHandler.createToken(user.id, uniqueId, TokenType.IDENTITY, {
             name: userData.name,
             userRole: userRoleParam,
+            // eslint-disable-next-line camelcase
             given_name: userData.given_name,
+            // eslint-disable-next-line camelcase
             family_name: userData.family_name,
             email: userData.email,
             ipAddress: req.ip,
             userAgent: req.headers['user-agent'],
-            deviceType: useragent.isDesktop
-              ? 'Desktop'
-              : useragent.isMobile
-                ? 'Mobile'
-                : useragent.isTablet
-                  ? 'Tablet'
-                  : 'Unknown',
+            deviceType: this.getDeviceType(useragent),
             geolocation: '',
           });
 
@@ -136,6 +138,7 @@ export class AuthService {
           identityToken,
           identityCookieOptions,
           user,
+          userRoleParam,
         };
       } catch (error) {
         logger.error(`Error authenticating user: ${error.message}`);
@@ -160,7 +163,7 @@ export class AuthService {
       return this.jwtHandler.createToken(
         decoded.userId,
         decoded.uniqueId,
-        TokenType.Access,
+        TokenType.ACCESS,
       );
     } catch (error) {
       throw new Error(String(error));

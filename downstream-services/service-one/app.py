@@ -6,6 +6,10 @@ app = Flask(__name__)
 def ping():
     return jsonify({"message": "Pong! from service one"}), 200
 
+@app.route('/one/pong', methods=['GET'])
+def pong():
+    return jsonify({"message": "Ping! from service one"}), 200
+
 @app.route('/one/echo', methods=['POST'])
 def echo():
     data = request.json

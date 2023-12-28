@@ -24,5 +24,5 @@
         AS->>JWT: createToken(userId, TokenType.Access/Refresh/Identity)
         JWT-->>AS: Tokens & Cookie Options
         AS-->>AC: Tokens, Cookies, User Info
-        AC->>Kong: Set Cookies (access_token, refresh_token, identity_token) & Response 200 { user, success: true }
+        AC->>Kong: Set Cookies (access_token, refresh_token, identity_token) & Response 200 { user, role, success: true }
     end

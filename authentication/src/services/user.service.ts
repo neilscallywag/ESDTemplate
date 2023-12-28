@@ -11,7 +11,7 @@ import {
   UserLocationData,
   UserRole,
 } from '../entity';
-import { Role } from '../types';
+import { RoleGroups } from '../types';
 
 import { DatabaseService } from './typeorm.service';
 
@@ -43,50 +43,23 @@ class UserService {
     userData: UserData,
     deviceData: UserDeviceData,
     locationData: UserLocationData,
-    userRole: Role,
+    userRole: {
+      name: string;
+      roles: string[];
+    },
   ): Promise<User> {
     const queryRunner = this.dbService.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      let user = await this.userRepo.findOneBy({ email: userData.email });
-
+      const user = await this.findOrCreateUser(userData);
       if (!user) {
-        user = this.userRepo.create({
-          username: userData.name,
-          email: userData.email,
-        });
-        user = await this.userRepo.save(user);
-
-        const userAuth = this.userAuthRepo.create({
-          user: user,
-          password: randomBytes(16).toString('hex'),
-          googleAccessKey: userData.googleAccessKey,
-        });
-        await this.userAuthRepo.save(userAuth);
-
-        const userDevice = this.userDeviceRepo.create({
-          user: user,
-          ipAddress: deviceData.ipAddress,
-          userAgent: deviceData.userAgent,
-          deviceType: deviceData.deviceType,
-        });
-        await this.userDeviceRepo.save(userDevice);
-
-        const userLocation = this.userLocationRepo.create({
-          user: user,
-          geolocation: locationData.geolocation,
-        });
-        await this.userLocationRepo.save(userLocation);
-
-        const userRoleEntity = this.userRoleRepo.create({
-          user: user,
-          role: userRole,
-        });
-        await this.userRoleRepo.save(userRoleEntity);
+        await this.createUserAuth(user, userData);
+        await this.createUserDevice(user, deviceData);
+        await this.createUserLocation(user, locationData);
+        await this.createUserRole(user, userRole);
       }
-
       await queryRunner.commitTransaction();
       return user;
     } catch (error) {
@@ -96,6 +69,63 @@ class UserService {
       await queryRunner.release();
     }
   }
+
+  private async findOrCreateUser(userData: UserData): Promise<User> {
+    let user = await this.userRepo.findOneBy({ email: userData.email });
+    if (!user) {
+      user = this.userRepo.create({
+        username: userData.name,
+        email: userData.email,
+        picture: userData.picture,
+      });
+      user = await this.userRepo.save(user);
+    }
+    return user;
+  }
+
+  private async createUserAuth(user: User, userData: UserData): Promise<void> {
+    const userAuth = this.userAuthRepo.create({
+      user: user,
+      password: randomBytes(16).toString('hex'),
+      googleAccessKey: userData.googleAccessKey,
+    });
+    await this.userAuthRepo.save(userAuth);
+  }
+
+  private async createUserDevice(
+    user: User,
+    deviceData: UserDeviceData,
+  ): Promise<void> {
+    const userDevice = this.userDeviceRepo.create({
+      user: user,
+      ipAddress: deviceData.ipAddress,
+      userAgent: deviceData.userAgent,
+      deviceType: deviceData.deviceType,
+    });
+    await this.userDeviceRepo.save(userDevice);
+  }
+
+  private async createUserLocation(
+    user: User,
+    locationData: UserLocationData,
+  ): Promise<void> {
+    const userLocation = this.userLocationRepo.create({
+      user: user,
+      geolocation: locationData.geolocation,
+    });
+    await this.userLocationRepo.save(userLocation);
+  }
+
+  private async createUserRole(
+    user: User,
+    userRole: { name: string; roles: string[] },
+  ): Promise<void> {
+    const userRoleEntity = this.userRoleRepo.create({
+      user: user,
+      roleGroup: userRole,
+    });
+    await this.userRoleRepo.save(userRoleEntity);
+  }
 }
 
-export { Role, UserData, UserDeviceData, UserLocationData, UserService };
+export { RoleGroups, UserData, UserDeviceData, UserLocationData, UserService };

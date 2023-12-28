@@ -1,34 +1,23 @@
-enum Permissions {
-  ReadPatients = "read:patients",
-  WritePatients = "write:patients",
-  ReadAppointments = "read:appointments",
-  WriteAppointments = "write:appointments",
-  DeleteAppointment = "delete:appointment",
-  AddAllergy = "write:allergy",
-  AddDiagnosis = "write:diagnosis",
-  RequestLab = "write:labs",
-  CancelLab = "cancel:lab",
-  CompleteLab = "complete:lab",
-  ViewLab = "read:lab",
-  ViewLabs = "read:labs",
-  ViewIncidents = "read:incidents",
-  ViewIncident = "read:incident",
-  ReportIncident = "write:incident",
-  ResolveIncident = "resolve:incident",
-  AddCarePlan = "write:care_plan",
-  ReadCarePlan = "read:care_plan",
-  AddCareGoal = "write:care_goal",
-  ReadCareGoal = "read:care_goal",
-  RequestMedication = "write:medications",
-  CancelMedication = "cancel:medication",
-  CompleteMedication = "complete:medication",
-  ViewMedication = "read:medication",
-  ViewMedications = "read:medications",
-  AddVisit = "write:visit",
-  ReadVisits = "read:visit",
-  RequestImaging = "write:imaging",
-  ViewImagings = "read:imagings",
-  ViewIncidentWidgets = "read:incident_widgets",
-}
+type PermissionsModel = {
+  [key: string]: string[];
+};
 
-export default Permissions;
+const applicationPermissions: PermissionsModel = {
+  dashboard: ["org.admin", "org.user"],
+  gayneil: ["org.admin", "org.permissions.SERVICENAME.read"],
+
+  /*
+   * Use org.admin or org.user when specific permissions are not required
+   * If this feels unnecessary, just use org.permissions for everything else
+   * However, org.admin should have some permissions by default which dont need to be specified
+   */
+
+  /*
+   * Below are examples of permissions that can be used in the application
+   * settings: ['org.admin', 'org.permissions.settings.manage'],
+   * userManagement: ['org.admin', 'org.permissions.user.manage'],
+   * reports: ['org.permissions.reports.read', 'org.permissions.reports.write'],
+   */
+};
+
+export default applicationPermissions;
