@@ -8,8 +8,11 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import customTheme from "~shared/theme";
 
-import { HeadProvider } from "./features/page-header/title/TitleContext";
+import { HeadProvider } from "~features/page-header/title/TitleContext";
+
 import App from "./App";
+
+import { AuthProvider } from "~auth/index";
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
@@ -22,16 +25,20 @@ if (rootElement) {
           }
         >
           <BrowserRouter>
-            <HeadProvider>
-              <App />
-            </HeadProvider>
+            <AuthProvider>
+              <HeadProvider>
+                <App />
+              </HeadProvider>
+            </AuthProvider>
           </BrowserRouter>
         </GoogleOAuthProvider>
       </ChakraProvider>
     </React.StrictMode>,
   );
 }
-// Apparently, vite does not natively ship with a service worker.
-// https://stackoverflow.com/questions/69961761/react-js-builds-with-vite-does-not-include-service-worker-ts
-// Hence need to install a module to do it for us.
-// Please check vite.config.ts to configure the service worker.
+/*
+ * Apparently, vite does not natively ship with a service worker.
+ * https://stackoverflow.com/questions/69961761/react-js-builds-with-vite-does-not-include-service-worker-ts
+ * Hence need to install a module to do it for us.
+ * Please check vite.config.ts to configure the service worker.
+ */

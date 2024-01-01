@@ -6,12 +6,14 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import { DeviceType } from '../types/DeviceType';
+
 import { User } from './User';
 
 export interface UserDeviceData {
   ipAddress: string;
   userAgent: string;
-  deviceType: string;
+  deviceType: DeviceType;
 }
 
 @Entity()
@@ -30,5 +32,5 @@ export class UserDevice {
   userAgent: string;
 
   @Column()
-  deviceType: string;
+  deviceType: DeviceType;
 }

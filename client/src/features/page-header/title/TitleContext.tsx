@@ -3,8 +3,9 @@ import * as React from "react";
 /**
  * Developer Notes
  *
- * In all homesty this can be redone using react-helmet. But I think it's better to not have so many unnessary dependencies.
- **/
+ * In all honesty this can be redone using react-helmet. But I think it's better to not have so many unnessary dependencies.
+ *
+ */
 
 // Define types
 type MetaTags = {
@@ -57,27 +58,28 @@ const HeadProvider: React.FC<{ children: React.ReactNode }> = ({
 };
 
 // Custom Hook for Updating Head
-function useHead(title: string, metaTags: MetaTags) {
+function useHead() {
   const context = React.useContext(HeadContext);
   if (!context) {
     throw new Error("useHead must be used within a HeadProvider");
   }
 
-  React.useEffect(() => {
+  return (title: string, metaTags: MetaTags) => {
     context.setHead(title, metaTags);
     document.title = title;
-
-    // Update description and keywords meta tags
     updateOrCreateMetaTag("description", metaTags.description || "");
     updateOrCreateMetaTag("keywords", metaTags.keywords || "");
-  }, [title, metaTags, context]);
+  };
 }
 
 export { HeadProvider, useHead };
 
 // USAGE;
 
-// useHead("My Page Title", {
-//   description: "Page description",
-//   keywords: "keyword1, keyword2",
-// });
+/*
+ * const updateHead = useHead();
+ * updateHead("My Page Title", {
+ *   description: "Page description",
+ *   keywords: "keyword1, keyword2",
+ * }, []);
+ */

@@ -9,7 +9,6 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
   ],
-
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2020,
@@ -28,36 +27,62 @@ module.exports = {
     'no-console': 'warn',
     'linebreak-style':
       process.platform === 'win32' ? ['error', 'windows'] : ['error', 'unix'],
-    '@typescript-eslint/no-unused-vars': [
-      'error',
-      {
-        argsIgnorePattern: '^_',
-      },
-    ],
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/member-delimiter-style': [
       'error',
-      {
-        singleline: {
-          delimiter: 'semi',
-          requireLast: true,
-        },
-      },
+      { singleline: { delimiter: 'semi', requireLast: false } },
     ],
     semi: ['error', 'always'],
-    // Rules for auto sort of imports
+    // Clean Code specific rules
+    'id-length': ['error', { min: 2 }],
+    'max-lines': ['error', 300],
+    complexity: ['error', 10],
+    'max-depth': ['error', 4],
+    'max-nested-callbacks': ['error', 3],
+    'max-params': ['error', 4],
+    'max-statements': ['error', 15],
+    camelcase: 'error',
+    'new-cap': [
+      'error',
+      {
+        newIsCap: true,
+        capIsNew: false,
+        properties: true,
+        capIsNewExceptions: [
+          'Entity',
+          'PrimaryGeneratedColumn',
+          'ManyToOne',
+          'JoinColumn',
+          'Column',
+        ],
+      },
+    ],
+    'no-mixed-operators': 'error',
+    'no-nested-ternary': 'error',
+    'no-unneeded-ternary': 'error',
+    'spaced-comment': ['error', 'always'],
+    'multiline-comment-style': ['error', 'starred-block'],
+    'no-warning-comments': [
+      'warn',
+      {
+        terms: ['todo', 'fixme'],
+        location: 'start', // Checks only the start of comments
+      },
+    ],
+    'no-throw-literal': 'error',
+    'handle-callback-err': 'error',
+    'no-redeclare': 'error',
+    'no-dupe-keys': 'error',
+    'no-duplicate-imports': 'error',
+    'no-useless-rename': 'error',
+    'no-var': 'error',
+    // Import sorting and organization
     'simple-import-sort/imports': [
       'error',
       {
         groups: [
-          // Side effect imports.
           ['^\\u0000'],
-          // Packages.
-          // Packages. `react` related packages come first.
-          // Things that start with a letter (or digit or underscore), or
-          // `@` followed by a letter.
           ['^react', '^@?\\w'],
-          // Root imports
-          // Shared imports should be separate from application imports.
           ['^(~shared)(/.*|$)'],
           ['^(~)(/.*|$)'],
           ['^(~typings)(/.*|$)'],
@@ -72,9 +97,7 @@ module.exports = {
             '^(~templates)(/.*|$)',
           ],
           ['^(~pages)(/.*|$)', '^(~features)(/.*|$)'],
-          // Parent imports. Put `..` last.
           ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
-          // Other relative imports. Put same-folder imports and `.` last.
           ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
         ],
       },

@@ -1,3 +1,5 @@
+export { DeviceType } from './DeviceType';
 export { GoogleUserInfo } from './GoogleUserInfo';
-export { Role } from './Role';
+export { RoleGroups } from './RoleGroups';
+export { TokenData } from './TokenData';
 export { UserData } from './UserData';

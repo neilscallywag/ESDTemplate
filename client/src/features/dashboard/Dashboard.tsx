@@ -1,42 +1,33 @@
 import { useEffect } from "react";
-import { Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
-import { useUpdateTitle } from "~features/page-header/title/TitleContext";
+import PrivateRoute from "~shared/PrivateRoute";
 
-// import NewPatient from "./NewPatient";
-// import PatientDetail from "./PatientDetail";
-// import PatientsList from "./PatientsList";
-// import  PrivateRoute  from "~shared/PrivateRoute";
-// import Permissions from "~models/Permissions";
+import { useHead } from "~features/page-header/title/TitleContext";
+
+import ViewDashboard from "./ViewDashboard";
+import ViewUserList from "./ViewUserList";
 
 const Dashboard = () => {
-  // const { permissions } = useSelector((state: RootState) => state.user)
-  // every feature needs to have a title set internally
-  const updateTitle = useUpdateTitle();
+  const updateHead = useHead();
   useEffect(() => {
-    updateTitle("Dashboard");
-  });
+    updateHead("Dashboard", {
+      description: "Dashboard",
+      keywords: "Dashboard",
+    });
+  }, []);
 
   return (
     <Routes>
-      {/* <PrivateRoute
-          isAuthenticated={permissions.includes(Permissions.ViewLabs)}
-          exact
-          path="/labs"
-          component={LabRequests}
-        />
-        <PrivateRoute
-          isAuthenticated={permissions.includes(Permissions.RequestLab)}
-          exact
-          path="/labs/new"
-          component={NewLabRequest}
-        />
-        <PrivateRoute
-          isAuthenticated={permissions.includes(Permissions.ViewLab)}
-          exact
-          path="/labs/:id"
-          component={ViewLab}
-        /> */}
+      {/* Check if user has permission to access this route/resource requested */}
+      <Route element={<PrivateRoute resourceRequested="dashboard" />}>
+        {/* When user is navigated to /dashboard, this component will be rendered by default */}
+        <Route index element={<ViewDashboard />} />
+      </Route>
+      <Route element={<PrivateRoute resourceRequested="gayneil" />}>
+        {/* When user is navigated to /dashboard/userlist, this component will be rendered */}
+        <Route path="gayneil" element={<ViewUserList />} />
+      </Route>
     </Routes>
   );
 };

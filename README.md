@@ -1,80 +1,76 @@
-# Enterprise Solution Development IS213 template files to quickly create a new project
-- [Enterprise Solution Development IS213 template files to quickly create a new project](#enterprise-solution-development-is213-template-files-to-quickly-create-a-new-project)
-  - [TODO](#todo)
-    - [CICD](#cicd)
-    - [Architecture](#architecture)
-    - [Frontend](#frontend)
-    - [Authentication](#authentication)
-  - [Folder Structure](#folder-structure)
-  - [Commit Hooks](#commit-hooks)
-  - [Quick Start](#quick-start)
-  - [Miscellaneous](#miscellaneous)
-    - [Makefile](#makefile)
+# 🏢 Enterprise Solution Development IS213 Template Files
 
-## TODO 
-### CICD
+Quickly create and manage new projects with the Enterprise Solution Development IS213 template files.
 
-- [ ] Cleanup local deployment using docker
-- [ ] Create a .env file populator script
-- [ ] Kubernetes cluster configuration
-- [ ] Terraform configuration
+- [🏢 Enterprise Solution Development IS213 Template Files](#-enterprise-solution-development-is213-template-files)
+  - [🚀 Quick Start](#-quick-start)
+  - [📚 TODO](#-todo)
+    - [🔧 CICD](#-cicd)
+    - [🏛 Architecture](#-architecture)
+    - [🌐 Frontend](#-frontend)
+    - [🔒 Authentication](#-authentication)
+  - [📁 Folder Structure](#-folder-structure)
+  - [🔨 Commit Hooks](#-commit-hooks)
+  - [🔍 Miscellaneous](#-miscellaneous)
+    - [🛠 Makefile](#-makefile)
 
-### Architecture
+## 🚀 Quick Start
 
-- [ ] Create pipeline to allow separation for read and write databases using Kafka, Debezium for Change Data Capture (CDC).
-- [ ] Better documentation for maintainence 
-- [ ] Mini VAPT to test security issues
+To get started:
 
+1. Populate all the environment variables.
+2. Run the following make commands for local development using Docker. This will also install dependencies for Husky.
+    ```bash
+    make up
+    ```
 
-### Frontend
-- [ ] Migrate from CRA to Vite
-- [ ] Write unit tests
-- [ ] set up visual regression testing pipeline
+## 📚 TODO 
 
-### Authentication
-- [ ] Write unit tests
-- [ ] Better logging capabilities
+### 🔧 CICD
 
+- [ ] Cleanup local deployment using Docker.
+- [ ] Create a .env file populator script.
+- [ ] Kubernetes cluster configuration.
+- [ ] Terraform configuration.
 
+### 🏛 Architecture
 
-## Folder Structure
+- [ ] Create a pipeline for separating read and write databases using Kafka, Debezium (CDC).
+- [ ] Improve documentation for maintenance.
+- [ ] Conduct Mini VAPT for security testing.
 
-1. **authentication:**
-   - Contains code related to authentication and authorization.
+### 🌐 Frontend
 
-2. **deployment:**
-   - Contains deployment-related files, including Docker and Kubernetes configurations.
-   - Subfolders for Docker and Kubernetes deployment setups.
+- [ ] Migrate from CRA to Vite.
+- [ ] Write unit tests.
+- [ ] Set up a visual regression testing pipeline.
 
-3. **downstream-services:**
-   - Contains subfolders for different downstream services. All the services here are to be behind the kong gateway.
-   - Each service has its Dockerfile and code files.
+### 🔒 Authentication
 
-4. **frontend:**
-   - Represents the front-end portion of the project.
+- [ ] Write unit tests.
+- [ ] Enhance logging capabilities.
 
-5. **kong:**
-   - Contains code related to Kong API Gateway.
-   - Includes Kong configurations and custom authentication plugin.
+## 📁 Folder Structure
 
-6. **Makefile:**
-   - Makefile for running various project-related tasks.
+| Folder               | Description                                                                              |
+|----------------------|------------------------------------------------------------------------------------------|
+| `authentication`     | Code for authentication and authorization.                                               |
+| `deployment`         | Docker and Kubernetes configurations. Subfolders for Docker and Kubernetes setups.       |
+| `downstream-services`| Different downstream services, all behind the Kong gateway. Each with its Dockerfile.    |
+| `frontend`           | Front-end portion of the project.                                                        |
+| `kong`               | Kong API Gateway related code, configurations, and custom authentication plugin.         |
+| `Makefile`           | Makefile for various project-related tasks.                                              |
 
-## Commit Hooks
-Husky is used in tandem with:
+## 🔨 Commit Hooks
 
-**lint-staged** to ensure files are linted on commit
+Utilizing Husky with:
 
-**commitlint** to ensure commit messages adhere to [convention](https://www.conventionalcommits.org/en/v1.0.0/). 
+- **lint-staged** for linting files on commit.
+- **commitlint** to ensure commit messages adhere to the [convention](https://www.conventionalcommits.org/en/v1.0.0/).
 
-## Quick Start
+## 🔍 Miscellaneous
 
-- Populate all the environment variables
-   
-- Run make commands to start local development using docker. This command will also install the dependencies for `husky`.
-```bash
-make up
-```
-## Miscellaneous
-### Makefile
-Refer to the [`/docs/Makefile.md`](/docs/Makefile.md) which provides instructions on how to install `Make` on both Windows and Ubuntu.
+### 🛠 Makefile
+
+For instructions on installing `Make` on Windows and Ubuntu, refer to [`/docs/Makefile.md`](/docs/Makefile.md).
+

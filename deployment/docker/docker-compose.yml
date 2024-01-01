@@ -133,7 +133,7 @@ services:
     build: ../../client
     image: client:1.0
     depends_on:
-      - kong-gateway
+      kong-gateway:
+        condition: service_healthy
     ports:
-      - "8080:3000"
-
+      - "8080:5173"

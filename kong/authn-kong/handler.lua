@@ -70,20 +70,21 @@ local function getAndVerifyIdentityToken(identityToken, jwt_secret)
     return verifyToken(jwt_secret, identityToken)
 end
 
--- Function to check if the path is authorized for the user role
+-- Function to check if the path is authorized for the user's roles
 local function isPathAuthorizedForRole(path, userRole, roleAccessRules)
-    local allowedPaths = roleAccessRules[userRole]
-    if not allowedPaths then
-        return false
-    end
-
-    for _, allowedPath in ipairs(allowedPaths) do
-        if path == allowedPath then
-            return true
+    for _, role in ipairs(userRole.roles) do
+        local allowedPaths = roleAccessRules[role]
+        if allowedPaths then
+            for _, allowedPath in ipairs(allowedPaths) do
+                if path == allowedPath then
+                    return true
+                end
+            end
         end
     end
     return false
 end
+
 
 -- Function for making HTTP POST requests
 local function makeHttpPostRequest(endpointUrl, requestBody)

@@ -1,13 +1,21 @@
 module.exports = {
-  plugins: ["import", "simple-import-sort", "prettier", "testing-library"],
-  extends: ["eslint:recommended", "plugin:prettier/recommended"],
+  plugins: [
+    "import",
+    "simple-import-sort",
+    "prettier",
+    "testing-library",
+    "@typescript-eslint",
+  ],
+  extends: [
+    "eslint:recommended",
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/recommended",
+  ],
   overrides: [
     {
       files: ["*.ts", "*.tsx"],
-      extends: ["plugin:@typescript-eslint/recommended"],
       parser: "@typescript-eslint/parser",
     },
-
     {
       files: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
       rules: {
@@ -24,20 +32,12 @@ module.exports = {
   rules: {
     "linebreak-style":
       process.platform === "win32" ? ["error", "windows"] : ["error", "unix"],
-    // Rules for auto sort of imports
     "simple-import-sort/imports": [
       "error",
       {
         groups: [
-          // Side effect imports.
           ["^\\u0000"],
-          // Packages.
-          // Packages. `react` related packages come first.
-          // Things that start with a letter (or digit or underscore), or
-          // `@` followed by a letter.
           ["^react", "^@?\\w"],
-          // Root imports
-          // Shared imports should be separate from application imports.
           ["^(~shared)(/.*|$)"],
           ["^(~)(/.*|$)"],
           ["^(~typings)(/.*|$)"],
@@ -52,9 +52,7 @@ module.exports = {
             "^(~templates)(/.*|$)",
           ],
           ["^(~pages)(/.*|$)", "^(~features)(/.*|$)"],
-          // Parent imports. Put `..` last.
           ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
-          // Other relative imports. Put same-folder imports and `.` last.
           ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
         ],
       },
@@ -63,5 +61,38 @@ module.exports = {
     "import/first": "error",
     "import/newline-after-import": "error",
     "import/no-duplicates": "error",
+    // Clean Code specific rules
+    "id-length": ["error", { min: 2 }],
+    "max-lines": ["error", 300],
+    complexity: ["error", 10],
+    "max-depth": ["error", 4],
+    "max-nested-callbacks": ["error", 3],
+    "max-params": ["error", 4],
+    "max-statements": ["error", 15],
+    camelcase: "error",
+    "new-cap": "error",
+    "no-mixed-operators": "error",
+    "no-warning-comments": [
+      "warn",
+      {
+        terms: ["todo", "fixme"],
+        location: "start", // Checks only the start of comments
+      },
+    ],
+    "no-nested-ternary": "error",
+    "no-unneeded-ternary": "error",
+    "spaced-comment": ["error", "always"],
+    "multiline-comment-style": ["error", "starred-block"],
+    "no-throw-literal": "error",
+    "handle-callback-err": "error",
+    "no-redeclare": "error",
+    "no-dupe-keys": "error",
+    "no-duplicate-imports": "error",
+    "no-useless-rename": "error",
+    "no-var": "error",
+    // TypeScript specific rules
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
   },
 };
